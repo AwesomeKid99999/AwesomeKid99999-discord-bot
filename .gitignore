@@ -1,4 +1,4 @@
-./musicbot
-./config.json 
-.env
+/musicbot
+/config.json 
+/.env
 .DS_Store
