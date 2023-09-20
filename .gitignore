@@ -2,6 +2,5 @@
 /config.json 
 /.env
 .DS_Store
-/utilities
 /node_modules
 /database.db
