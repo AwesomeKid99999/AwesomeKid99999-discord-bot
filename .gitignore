@@ -2,3 +2,4 @@
 /config.json 
 /.env
 .DS_Store
+/utilities
