@@ -29,9 +29,11 @@ module.exports = {
 				return await interaction.reply(`Please make your message shorter.`);
 			 }
 {
-				target.send(`**${interaction.user.tag}** from **${interaction.guild.name}** has sent you a message.\n**Message:** ${value}`).catch(async (err) => {
+				target.send(`**${interaction.user.tag}** from **${interaction.guild.name}** has sent you a message.\n**Message:** ${value}`)
+				.catch(async (err) => {
 					console.log(err)
-return await interaction.editReply(`Failed to send the message. Try again. (**${target.user.tag}** may have their DMs off)`).catch((err) =>{})
+					return await interaction.editReply(`Failed to send the message. Try again. (**${target.user.tag}** may have their DMs off)`)
+					.catch((err) =>{console.log(err)})
 })
 				return await interaction.reply(`Successfully sent **${target.user.tag}** a message.\n**Message:** ${value}`);
 
