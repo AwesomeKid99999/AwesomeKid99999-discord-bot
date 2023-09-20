@@ -24,6 +24,8 @@
     "discord-player": "^6.6.1",
     "discord.js": "^14.11.0",
     "pino": "^8.14.1",
+    "sequelize": "^6.33.0",
+    "sqlite3": "^5.1.6",
     "ytdl-core": "^4.11.5"
   }
 }
