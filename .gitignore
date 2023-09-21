@@ -3,4 +3,4 @@
 /.env
 .DS_Store
 /node_modules
-/database.db
+/database.sqlite
