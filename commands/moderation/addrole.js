@@ -18,7 +18,7 @@ module.exports = {
 			
 			
 			 user =  interaction.options.getMember('target');
-			const role = interaction.options.getRole('role') ?? 'No reason provided';
+			const role = interaction.options.getRole('role');
 		
 			await interaction.deferReply();
 
