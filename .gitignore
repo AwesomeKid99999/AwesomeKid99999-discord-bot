@@ -1,5 +1,5 @@
 /musicbot
-/config.json 
+config.json
 /.env
 .DS_Store
 /node_modules
