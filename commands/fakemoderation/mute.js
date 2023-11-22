@@ -11,43 +11,35 @@ module.exports = {
 			.setDescription('The reason for muting the user'))
 		.setDMPermission(false)
 		.addIntegerOption(option => option.setName('days')
-			.setDescription('Number of days to mute the user'))
+			.setDescription('Number of days to mute the user')
+			.setMinValue(-1000000)
+			.setMaxValue(1000000))
 		.addIntegerOption(option => option.setName('hours')
-			.setDescription('Number of hours to mute the user'))
+			.setDescription('Number of hours to mute the user')
+			.setMinValue(-1000000)
+			.setMaxValue(1000000))
 		.addIntegerOption(option => option.setName('minutes')
-			.setDescription('Number of hours to mute the user'))
+			.setDescription('Number of hours to mute the user')
+			.setMinValue(-1000000)
+			.setMaxValue(1000000))
 		.addIntegerOption(option => option.setName('seconds')
-			.setDescription('Number of seconds to mute the user')),
+			.setDescription('Number of seconds to mute the user')
+			.setMinValue(-1000000)
+			.setMaxValue(1000000)),
 		
 		category: 'fakemoderation',
 		async execute(interaction) {
 			const user = interaction.options.getUser('target');
 			const value = interaction.options.getString('reason') ?? 'No reason provided';
-			
-			
 
-			days = interaction.options.getInteger('days');
-			hours = interaction.options.getInteger('hours');
-			minutes = interaction.options.getInteger('minutes');
-			seconds = interaction.options.getInteger('seconds');
+
+			let days = Math.abs(interaction.options.getInteger('days'));
+			let hours = Math.abs(interaction.options.getInteger('hours'));
+			let minutes = Math.abs(interaction.options.getInteger('minutes'));
+			let seconds = Math.abs(interaction.options.getInteger('seconds'));
 
 			await interaction.deferReply();
 
-			if (days < 0) {
-				Math.abs(days);
-			}
-
-			if (hours < 0) {
-				Math.abs(hours);
-			}
-
-			if (minutes < 0) {
-				Math.abs(minutes);
-			}
-
-			if (seconds < 0) {
-				Math.abs(seconds);
-			}
 
 			while (seconds > 60) {
 				minutes += 1;
