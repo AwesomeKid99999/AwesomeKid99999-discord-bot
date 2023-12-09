@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField, transformResolved } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,21 +16,21 @@ module.exports = {
 		async execute(interaction) {
 			
 			
-			 user =  interaction.options.getMember('target');
+			let target =  interaction.options.getMember('target');
 			const role = interaction.options.getRole('role') ?? 'No reason provided';
 		
 			await interaction.deferReply();
 
-			if (!user) {
-				user =	interaction.options.getUser('target');
+			if (!target) {
+				target =	interaction.options.getUser('target');
 				if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
-					 await interaction.editReply( ':x: You do not have permission to manage roles.');
+					return await interaction.editReply( ':x: You do not have permission to manage roles.');
 					
 				}
-				 return await interaction.editReply(`You cannot remove roles from **${user.tag}** because they are not in the server.`);
+				 return await interaction.editReply(`You cannot remove roles from **${target.tag}** because they are not in the server.`);
 				}
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
-				return interaction.editReply(':x: You do not have permission to manage roles.');
+				return await interaction.editReply(':x: You do not have permission to manage roles.');
 				
 			}
 			
@@ -38,26 +38,38 @@ module.exports = {
 			
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+			if (!botMember.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+				return await interaction.editReply(':warning: I do not have permission to manage roles.');
+				
+			}
 			const highestRole = botMember.roles.highest;
 			
-			
+			const ownerPromise = interaction.guild.fetchOwner();
+			const owner = await ownerPromise;
+
+			if (interaction.member === owner) {
+				if (role.comparePositionTo(highestRole) >= 0) {
+				    return await interaction.editReply( `:warning: I cannot remove the role ${role} from **${target.user.tag}** because my role is not high enough.`);
+
+				}  else if (!role.editable) {
+					return await interaction.editReply(`:warning: You cannot remove the role ${role} from **${target.user.tag}** because it is not editable.`);
+				} else {
+					await target.roles.remove(role);
+					return await interaction.editReply(`Successfully removed the role ${role} from **${target.user.tag}**`);
+				}
+			} else {
 			 if (role.comparePositionTo(interaction.member.roles.highest) >= 0) {
-				  interaction.editReply(`:warning: You cannot remove the role ${role} from **${user.user.tag}** because your role is not high enough.`);
-				  
-		
+				  return await interaction.editReply(`:warning: You cannot remove the role ${role} from **${target.user.tag}** because your role is not high enough.`);
 				} else if (role.comparePositionTo(highestRole) >= 0) {
-					await interaction.editReply(`:warning: I cannot remove the role ${role} from **${user.user.tag}** because my role is not high enough.`);
-					
-				  }  else if (!role.editable) {
-					return interaction.editReply(`:warning: You cannot remove the role ${role} from **${user.user.tag}** because it is not editable.`);
-				} else
-			{
+					return await interaction.editReply(`:warning: I cannot remove the role ${role} from **${target.user.tag}** because my role is not high enough.`);
+				} else if (!role.editable) {
+					return await interaction.editReply(`:warning: You cannot remove the role ${role} from **${target.user.tag}** because it is not editable.`);
+				} else {
 				
-				await user.roles.add(role);
-				return await interaction.editReply(`Successfully removed the role ${role} from **${user.user.tag}**`);
+				await target.roles.remove(role);
+				return await interaction.editReply(`Successfully removed the role ${role} from **${target.user.tag}**`);
 
+				}
 			}
-			
-
 	},
 };

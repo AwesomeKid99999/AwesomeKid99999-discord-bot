@@ -24,6 +24,13 @@ module.exports = {
 				return interaction.editReply({ content: ':x: You do not have permission to unban users.', ephemeral: true });
 				
 			}
+
+			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+			if (!botMember.permissions.has(PermissionsBitField.Flags.BanMembers)) {
+				return interaction.editReply(':warning: I do not have permission to unban users.');
+				
+			}
+
 			if (!isBanned) {
 				await interaction.editReply(`User **${user.tag}** is not banned.`);
 				return;

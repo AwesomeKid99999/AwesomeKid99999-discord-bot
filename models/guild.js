@@ -7,7 +7,15 @@ module.exports = Guild = sequelize.define('guild', {
         primaryKey: true
     },
     muteRoleId: {
-        type: Sequelize. STRING,
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    welcomeChannelId: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    chatgptChannelId: {
+        type: Sequelize.STRING,
         allowNull: true
     }
 });

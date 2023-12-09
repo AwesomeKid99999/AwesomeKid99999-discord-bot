@@ -40,6 +40,10 @@ module.exports = {
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+			if (!botMember.permissions.has(PermissionsBitField.Flags.BanMembers)) {
+				return interaction.editReply(':warning: I do not have permission to ban users.');
+				
+			}			
 			const highestRole = botMember.roles.highest;
 			
 			

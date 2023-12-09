@@ -12,10 +12,11 @@ module.exports = {
 		category: 'fun',
 		async execute(interaction) {
 			
-			const target = interaction.options.getMember('target');
+			let target = interaction.options.getMember('target');
 			const value = interaction.options.getString('message');
 			
 			if (!target) {
+				target = interaction.options.getUser('target');
 				return await interaction.reply(`Sorry, I cannot message **${target.user.tag}** because they are not in the server.`);
 			}
 

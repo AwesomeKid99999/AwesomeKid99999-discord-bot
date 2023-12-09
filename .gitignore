@@ -4,3 +4,4 @@
 .DS_Store
 /node_modules
 /database.sqlite
+/resources/sound\ files

@@ -6,9 +6,9 @@ module.exports = {
 		.setName('muterole')
 		.setDescription('Add, change, or remove the mute role in the server. (STAFF ONLY)')
 		.setDMPermission(false)
-			
-		.addRoleOption(option => option.setName('role')
-		.setDescription('The role to set')),
+		.addRoleOption(option => option
+			.setName('role')
+			.setDescription('The role to set')),
 		
 		category: 'moderation',
 		async execute(interaction) {
@@ -25,6 +25,12 @@ module.exports = {
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+			if (!botMember.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+				return interaction.editReply(':warning: I do not have permission to manage roles.');
+				
+			}
+
+
 			const highestRole = botMember.roles.highest;
 
 			if (!role) {

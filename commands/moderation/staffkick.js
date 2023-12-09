@@ -38,6 +38,10 @@ module.exports = {
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+			if (!botMember.permissions.has(PermissionsBitField.Flags.KickMembers)) {
+				return interaction.editReply(':warning: I do not have permission to kick members.');
+				
+			}			
 			const highestRole = botMember.roles.highest;
 			
 			
