@@ -1,9 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits, VoiceStateManager} = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { Player } = require('discord-player');
 const { token, chatGptToken } = require('./config.json');
 const { OpenAI } = require('openai');
+const { clearInterval } = require('node:timers');
 const wait = require('node:timers/promises').setTimeout;
 
 
@@ -61,30 +62,58 @@ client.on('messageCreate', async (message) => {
 	const guild =  await Guild.findOne({ where: { id: message.guild.id }})
 	
 		if (!guild) return; 
+		
+
+		let conversation = [];
+		conversation.push({
+			role: 'system',
+			content: 'Awesome\'s Utility is friendly.'
+		})
+
+		let prevMessages = await message.channel.messages.fetch({ limit: 10 });
+		prevMessages.reverse();
+		prevMessages.forEach ((msg) => {
+			if (msg.author.bot && msg.author.id !== client.user.id) return;
+
+			const username = msg.author.username.replace(/\s+/g, '_').replace(/[^\w\s]/gi, '');
+
+			if (msg.author.id === client.user.id) {
+				conversation.push({
+					role: 'assistant', 
+					name: username,
+					content: msg.content,
+				
+				});
+				return;
+			}
+			conversation.push ({
+				role: 'user',
+				name: username, 
+				content: msg.content,
+			})
+		})
 
 
 
 		if ((!guild.chatgptChannelId) && (message.mentions.users.has(message.client.user.id))) {
+			await message.channel.sendTyping();
+
+			const sendTypingInterval = setInterval(() => { 
+				message.channel.sendTyping(); 
+			}, 5000);
+	
 			try {
-				await message.channel.sendTyping();
 				await wait(5000);
 				const chatCompletion = await openai.chat.completions.create({
-				messages: [
-					{ 
-					
-						role: 'user', 
-						content: message.content 
-			
-					}
-				],
+				messages: conversation,
 				model: 'gpt-3.5-turbo',
 			  })
-				  const responseMessage =  chatCompletion.choices[0].message.content;
-		const chunkSizeLimit = 2000;
+				const responseMessage =  chatCompletion.choices[0].message.content;
+				const chunkSizeLimit = 2000;
 	
 		for (let i = 0; i < responseMessage.length; i += chunkSizeLimit) {
 			const chunk = responseMessage.substring(i, i + chunkSizeLimit);
-	
+			 clearInterval(sendTypingInterval);
 			await message.reply(chunk);
 		}
 	
@@ -107,17 +136,13 @@ client.on('messageCreate', async (message) => {
 
         try {
 			await message.channel.sendTyping();
-			await wait(5000);
+
+			const sendTypingInterval = setInterval(() => { 
+				message.channel.sendTyping(); 
+			}, 5000);
+				await wait(5000);
             const chatCompletion = await openai.chat.completions.create({
-            messages: [
-				
-				{ 
-				
-					role: 'user', 
-					content: message.content 
-		
-				}
-			],
+            messages: conversation,
             model: 'gpt-3.5-turbo',
             
           })
@@ -126,7 +151,7 @@ client.on('messageCreate', async (message) => {
 
     for (let i = 0; i < responseMessage.length; i += chunkSizeLimit) {
         const chunk = responseMessage.substring(i, i + chunkSizeLimit);
-
+		clearInterval(sendTypingInterval);
     	 await message.reply(chunk);
     }
 

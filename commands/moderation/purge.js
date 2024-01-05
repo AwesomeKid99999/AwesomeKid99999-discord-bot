@@ -11,7 +11,7 @@ module.exports = {
 			.setDescription('Number of messages to delete')),
 	async execute(interaction) {
 		
-		await interaction.deferReply();
+		await interaction.deferReply({ephemeral: true});
 		const amount = await interaction.options.getInteger('amount');
 		
 		
@@ -20,8 +20,8 @@ module.exports = {
 		if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
 			return interaction.editReply(':warning: You do not have permission to delete messages.');
 		}
-		if (amount < 1 || amount > 100) {
-			return interaction.editReply(':warning: You need to input a number between 1 and 100.');
+		if (amount < 2 || amount > 100) {
+			return interaction.editReply(':warning: You need to input a number between 2 and 100.');
 		}
 		
 
@@ -31,16 +31,14 @@ module.exports = {
 
 		try {( interaction.channel.bulkDelete(amount, filterOld = true))
 			.then(messages => console.log(`Bulk deleted ${messages.size} messages`),
-)} catch(error)  
-{
+		)} catch(error) {
 	console.error(error);
 	return interaction.editReply('There was an error trying to delete messages in this channel!');
-};
-
+}
 const messages = await interaction.channel.bulkDelete(amount, filterOld = true);
-await interaction.editReply({content: `Successfully deleted ${messages.size} messages.`, ephemeral: true });
-await interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
- const sentMessage = await channel.messages.fetch({ limit: 1 });
+ interaction.editReply({content: `Successfully deleted ${messages.size} messages.`});
+ interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
+ const sentMessage = await interaction.channel.messages.fetch({ limit: 1 });
  await wait(5000);
 if (sentMessage.size > 0) {
   const recentMessage = sentMessage.first();
