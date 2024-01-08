@@ -32,18 +32,18 @@ module.exports = {
 		try {( interaction.channel.bulkDelete(amount, filterOld = true))
 			.then(messages => console.log(`Bulk deleted ${messages.size} messages`),
 		)} catch(error) {
-	console.error(error);
-	return interaction.editReply('There was an error trying to delete messages in this channel!');
-}
-const messages = await interaction.channel.bulkDelete(amount, filterOld = true);
- interaction.editReply({content: `Successfully deleted ${messages.size} messages.`});
- interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
- const sentMessage = await interaction.channel.messages.fetch({ limit: 1 });
- await wait(5000);
-if (sentMessage.size > 0) {
-  const recentMessage = sentMessage.first();
- return recentMessage.delete();
-}
+			console.error(error);
+			return interaction.editReply('There was an error trying to delete messages in this channel!');
+		}
+		const messages = await interaction.channel.bulkDelete(amount, filterOld = true);
+ 		interaction.editReply({content: `Successfully deleted ${messages.size} messages.`});
+ 		interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
+ 		const sentMessage = await interaction.channel.messages.fetch({ limit: 1 });
+ 		await wait(5000);
+		if (sentMessage.size > 0) {
+  			const recentMessage = sentMessage.first();
+ 			return recentMessage.delete();
+		}
 
 	},
 };
