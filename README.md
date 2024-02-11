@@ -1,6 +1,6 @@
 # Awesome's Utility
 
-__**This README is still a work in progress.**__
+**__This README is still a work in progress.__**
 
 ## Setting up the bot
 
