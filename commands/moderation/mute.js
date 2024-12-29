@@ -3,7 +3,7 @@ const Guild = require('../../models/guild')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('modmute')
+		.setName('mute')
 		.setDescription('Mute a member in the server. (STAFF ONLY)')
 		.setDMPermission(false)
 		.addUserOption(option => option.setName('target')
@@ -26,28 +26,31 @@ module.exports = {
 				console.log(`${interaction.guild.name} does not have a muterole set`);
 				return await interaction.reply(`:warning: There is no mute role set.`)
 			}
-			await interaction.deferReply();
 
 
 
 			if (!target) {
 				if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
-					return await interaction.editReply( ':x: You do not have permission to manage roles.');
+					return await interaction.reply( ':x: You do not have permission to mute members.');
 				}
-				return await interaction.editReply(`You cannot mute **${target.tag}** because they are not in the server.`);
+				return await interaction.reply(`You cannot mute **${target.tag}** because they are not in the server.`);
 			}
 			
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
-				return await interaction.editReply(':x: You do not have permission to mute members.');
+				return await interaction.reply(':x: You do not have permission to mute members.');
 			}
-			
-			
+
+			if (target.id === interaction.user.id) {
+				return interaction.reply({ content: ':warning: Please do not try to mute yourself.'});
+			}
+
+
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
 			if (target === botMember) {
-				return await interaction.editReply('Please don\'t mute me :sob:');
+				return await interaction.reply('Please don\'t mute me :sob:');
 			}
 			if (!botMember.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
-				return await interaction.editReply(':warning: I do not have permission to mute members.');
+				return await interaction.reply(':warning: I do not have permission to mute members.');
 				
 			}
 			const highestRole = botMember.roles.highest;
@@ -56,20 +59,20 @@ module.exports = {
 			const owner = await ownerPromise;
 			
 			if (interaction.member === owner) {
-				if (role.comparePositionTo(highestRole) >= 0) {
-					return await interaction.editReply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);
+				if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
+					return await interaction.reply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);
 				} else {
-					await target.roles.remove(role);
-					return await interaction.editReply(`Successfully muted **${target.user.tag}**`);
+					await target.roles.add(role);
+					return await interaction.reply(`Successfully muted **${target.user.tag}**`);
 				}
 			} else {
-			 	if (user.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
-					return await interaction.editReply(`:warning: You cannot mute **${target.user.tag}** because your role is not high enough.`);
-				} else if (user.roles.highest.comparePositionTo(highestRole) >= 0) {
-					return await interaction.editReply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);	
+			 	if (target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
+					return await interaction.reply(`:warning: You cannot mute **${target.user.tag}** because your role is not high enough.`);
+				} else if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
+					return await interaction.reply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);	
 				} else {
-				await user.roles.add(role);
-				return await interaction.editReply(`Successfully muted **${target.user.tag}**`);
+				await target.roles.add(role);
+				return await interaction.reply(`Successfully muted **${target.user.tag}**`);
 			}
 		}	
 

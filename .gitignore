@@ -1,7 +1,10 @@
 /musicbot
-/config.json
-/.env
+config.json
+.env
 .DS_Store
 /node_modules
-/database.sqlite
+database.sqlite
 /resources/sound\ files
+/.vs
+/.idea
+

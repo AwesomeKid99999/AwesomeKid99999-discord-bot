@@ -2,7 +2,7 @@ const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('modunban')
+		.setName('unban')
 		.setDMPermission(false)
 		.setDescription('Unban a user from the server. (STAFF ONLY)')
 		.addUserOption(option => option.setName('target')
@@ -18,21 +18,20 @@ module.exports = {
 			const isBanned = bannedUsers.has(userId);
 			
 			const value = interaction.options.getString('reason') ?? 'No reason provided';
-			await interaction.deferReply();
 
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
-				return interaction.editReply({ content: ':x: You do not have permission to unban users.', ephemeral: true });
+				return interaction.reply({ content: ':x: You do not have permission to unban users.', ephemeral: true });
 				
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
 			if (!botMember.permissions.has(PermissionsBitField.Flags.BanMembers)) {
-				return interaction.editReply(':warning: I do not have permission to unban users.');
+				return interaction.reply(':warning: I do not have permission to unban users.');
 				
 			}
 
 			if (!isBanned) {
-				await interaction.editReply(`User **${user.tag}** is not banned.`);
+				await interaction.reply(`User **${user.tag}** is not banned.`);
 				return;
 			}
 			
@@ -40,7 +39,7 @@ module.exports = {
 			
 			
 				await interaction.guild.bans.remove(userId, {reason: `${value} - ${interaction.user.tag}`} );
-				await interaction.editReply(`Successfully unbanned **${user.tag}**\n**Reason:** ${value}`);
+				await interaction.reply(`Successfully unbanned **${user.tag}**\n**Reason:** ${value}`);
 
 			
 			

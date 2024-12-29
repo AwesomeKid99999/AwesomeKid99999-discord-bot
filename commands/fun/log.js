@@ -5,7 +5,10 @@ module.exports = {
 		.setName('log')
 		.setDescription('Make me send a message to the console!')
 		.setDMPermission(false)
-		.addStringOption(option => option.setName('input').setDescription('The message to send to the console').setRequired(true)),
+		.addStringOption(option => option
+			.setName('input')
+			.setDescription('The message to send to the console')
+			.setRequired(true)),
 		category: 'fun',
 	async execute(interaction) {
 		const value = interaction.options.getString('input');

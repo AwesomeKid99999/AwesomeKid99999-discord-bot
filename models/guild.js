@@ -14,8 +14,26 @@ module.exports = Guild = sequelize.define('guild', {
         type: Sequelize.STRING,
         allowNull: true
     },
+    welcomeMessage: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+
+    leaveChannelId: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    leaveMessage: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     chatgptChannelId: {
         type: Sequelize.STRING,
         allowNull: true
-    }
+    },
+    chatgptToggle: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true
+    },
+
 });

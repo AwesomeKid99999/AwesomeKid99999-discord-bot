@@ -36,8 +36,8 @@ module.exports = {
 			return interaction.editReply('There was an error trying to delete messages in this channel!');
 		}
 		const messages = await interaction.channel.bulkDelete(amount, filterOld = true);
- 		interaction.editReply({content: `Successfully deleted ${messages.size} messages.`});
- 		interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
+ 		await interaction.editReply({content: `Successfully deleted ${messages.size} messages.`});
+ 		await interaction.channel.send(`**${interaction.user.tag}** deleted ${messages.size} messages.`);
  		const sentMessage = await interaction.channel.messages.fetch({ limit: 1 });
  		await wait(5000);
 		if (sentMessage.size > 0) {
