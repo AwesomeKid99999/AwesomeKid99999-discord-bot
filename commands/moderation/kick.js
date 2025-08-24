@@ -12,28 +12,28 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('The reason for kicking the user')),
 		category: 'moderation',
 		async execute(interaction) {
-			 user =  interaction.options.getMember('target');
+			let target =  interaction.options.getMember('target');
 			const value = interaction.options.getString('reason') ?? 'No reason provided';
 			
 
-			if (!user) {
+			if (!target) {
 				
 				if (!interaction.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
-					 await interaction.reply({ content: ':x: You do not have permission to kick members.', ephemeral: true });	
+					 await interaction.reply({ content: ':x: You do not have permission to kick members.'});
 				}
 				 return interaction.reply(`The user you're trying to kick isn't in the server.`);
 				}
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
-				return interaction.reply({ content: ':x: You do not have permission to kick members.', ephemeral: true });
+				return interaction.reply({ content: ':x: You do not have permission to kick members.',  });
 				
 			}
 
-			if (user.id === interaction.user.id) {
-				return interaction.reply({ content: ':warning: Please do not try to kick yourself.', ephemeral: true });
+			if (target.id === interaction.user.id) {
+				return interaction.reply({ content: ':warning: Please do not try to kick yourself.'});
 			}
 
-			if (user.id === "872195259730386994") {
-				return interaction.reply({ content: `Please don't kick me :sob:`, ephemeral: true })
+			if (target.id === interaction.client.user.id) {
+				return interaction.reply({ content: `Please don't kick me :sob:` })
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
@@ -42,27 +42,47 @@ module.exports = {
 				
 			}			
 			const highestRole = botMember.roles.highest;
-			
-			
-			 if (user.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
-				  interaction.reply({content: ":warning: You don't have permission to kick this member because your role is not high enough.", ephemeral: true });
-				  
-		
-				} else if (user.roles.highest.comparePositionTo(highestRole) >= 0) {
-					await interaction.reply({content: ":warning: I don't have permission to kick this member because my role is not high enough.", ephemeral: true });
+			const ownerPromise = interaction.guild.fetchOwner();
+			const owner = await ownerPromise;
+
+
+			if (interaction.member === owner) {
+				if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
+					await interaction.reply({content: ":warning: I don't have permission to kick this member because my role is not high enough." });
+
+				} else {
+					if (!target.user.bot) {
+						target.send(`You were kicked from **${interaction.guild.name}** by **${interaction.user.tag}**.\n**Reason:** ${value}`)
+							.catch(async (err) => {
+							console.log(err)
+							return await interaction.reply(`Successfully kicked **${target.user.tag}**\n**Reason:** ${value}\nI was unable to DM them.`)
+								.catch((err) =>{
+								console.log(err)
+							})
+						})
+					}
+					await interaction.guild.members.kick(target, {reason: `${value} - ${interaction.user.tag}`} );
+					await interaction.reply(`Successfully kicked **${target.user.tag}**\n**Reason:** ${value}`);
+				}
+			} else if (target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
+				  interaction.reply({content: ":warning: You don't have permission to kick this member because your role is not high enough." });
+
+
+				} else if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
+					await interaction.reply({content: ":warning: I don't have permission to kick this member because my role is not high enough." });
 					
-				  } else
-			{
-				
-				
-				user.send(`You were kicked from **${interaction.guild.name}** by **${interaction.user.tag}**.\n**Reason:** ${value}`).catch(async (err) => {
-					console.log(err)
-				 return await interaction.reply(`Successfully kicked **${user.user.tag}**\n**Reason:** ${value}\nI was unable to DM them`).catch((err) =>{
-					 console.log(err)
-				 })
-})
-				await interaction.guild.members.kick(user, {reason: `${value} - ${interaction.user.tag}`} );
-				 await interaction.reply(`Successfully kicked **${user.user.tag}**\n**Reason:** ${value}`);
+				  } else {
+
+				if (!target.user.bot) {
+					target.send(`You were kicked from **${interaction.guild.name}** by **${interaction.user.tag}**.\n**Reason:** ${value}`).catch(async (err) => {
+						console.log(err)
+						return await interaction.reply(`Successfully kicked **${target.user.tag}**\n**Reason:** ${value}\nI was unable to DM them`).catch((err) => {
+							console.log(err)
+						})
+					})
+				}
+				await interaction.guild.members.kick(target, {reason: `${value} - ${interaction.user.tag}`} );
+				 await interaction.reply(`Successfully kicked **${target.user.tag}**\n**Reason:** ${value}`);
 
 			}
 			

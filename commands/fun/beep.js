@@ -7,12 +7,14 @@ module.exports = {
 		.setDescription('Replies with "Boop"!'),
 		category: 'fun',
 	async execute(interaction) {
-		// check if Sonia executed the interaction
-		if (interaction.user.id === "967548658243498015") {
-			interaction.reply('OMG ITS SONIA');
-		} else {
+		// // check if Sonia executed the interaction
+		// if (interaction.user.id === "967548658243498015") {
+		// 	interaction.reply('OMG ITS SONIA');
+		// } else {
 			interaction.reply('Boop!');
-		}
+		// }
 		
 	},
+
+
 };

@@ -1,39 +1,50 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../utilities/database');
+// export function that defines guild model
+module.exports = (sequelize, Sequelize) => {
+    return sequelize.define('guild', {
+        serverId: {
+            type: Sequelize.STRING,
+            primaryKey: true
+        },
+        muteRoleId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        welcomeChannelId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        welcomeMessage: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        welcomeEmbedId: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        },
 
-module.exports = Guild = sequelize.define('guild', {
-    id: {
-        type: Sequelize.STRING,
-        primaryKey: true
-    },
-    muteRoleId: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    welcomeChannelId: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    welcomeMessage: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-
-    leaveChannelId: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    leaveMessage: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    chatgptChannelId: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    chatgptToggle: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true
-    },
-
-});
+        leaveChannelId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        leaveMessage: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        leaveEmbedId: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        },
+        applicationChannelId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        applicationToggle: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true
+        },
+        messageLogChannelId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+    });
+};

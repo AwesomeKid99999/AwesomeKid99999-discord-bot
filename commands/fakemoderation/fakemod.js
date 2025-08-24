@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('joke')
+        .setName('fakemod')
         .setDescription('Do various fake moderation commands')
         .setDMPermission(false)
         .addSubcommand(subcommand => subcommand

@@ -1,4 +1,7 @@
+require('dotenv').config();
 const { SlashCommandBuilder } = require('discord.js');
+
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -6,6 +9,10 @@ module.exports = {
 		.setDMPermission(false)
 		.setDescription("Replies with to the link to the owner's personal website!"),
 	async execute(interaction) {
-		await interaction.reply(`**Awesome's website:** https://awesomekid99999.carrd.co`);
+		const bot = await interaction.client.application.fetch();
+
+
+		await interaction.reply(`**Owner ${bot.owner.tag}'s website:** ${process.env.OWNER_WEBSITE}`);
 	},
 };
+

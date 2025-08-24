@@ -1,4 +1,3 @@
-const { err } = require('@sapphire/framework');
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
 
 module.exports = {
@@ -8,15 +7,11 @@ module.exports = {
 		.setDMPermission(false)
 		.addStringOption(option => option.setName('input').setDescription('The input for me to say').setRequired(true))
 		.addChannelOption(option => option.setName('channel').setDescription('Where I should send the message'))
-		.addStringOption((option) =>
+		.addBooleanOption((option) =>
             option
                 .setName('tts')
-                .setDescription('Use text to speech?')
+                .setDescription('Enable text to speech?')
                 .setRequired(false)
-                .addChoices(
-                    { name: 'yes', value: '1' },
-                    { name: 'no', value: '0' }
-                )
         ),
 		category: 'fun',
 	async execute(interaction) {
@@ -26,7 +21,7 @@ module.exports = {
 
 
 
-		const mode =  interaction.options.getString('tts');
+		const mode =  interaction.options.getBoolean('tts');
 	
 
 	
@@ -34,7 +29,7 @@ module.exports = {
 			return await interaction.reply(`Please make your message shorter.`);
 		 }
 
-		 if (!mode || mode == 'no') {
+		 if (!mode) {
 			if (!channel || channel.id === interaction.channel.id ) {
 				return await interaction.reply(`${value}`);
 			}
@@ -47,6 +42,7 @@ module.exports = {
 				await channel.send(`**${interaction.user.tag}** - ${value}`);
 				return await interaction.reply(`Sent a message in ${channel}!`);
 			} catch (error) {
+				console.log(error)
 				if (error.message === 'Missing Permissions') {
 					return await interaction.reply(`I do not have permissions to send messages in ${channel}.`);
 				}

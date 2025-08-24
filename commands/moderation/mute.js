@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
-const Guild = require('../../models/guild')
+const {Guild, StaffRoles} = require("../../models/");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -16,29 +16,41 @@ module.exports = {
 			
 
 			let target =  interaction.options.getMember('target');
-			const guild = await Guild.findOne({ where: { id: await interaction.guild.id }});
+			const guild = await Guild.findOne({ where: { serverId: await interaction.guild.id }});
 			if (!guild) {
 				console.log(`${interaction.guild.name} does not exist in the database`);
 				return await  interaction.reply(`Please try to set a mute role first.`)
 			}
-			const role = await interaction.guild.roles.fetch(`${guild.muteRoleId}`);
-			if (!role) {
+			if (!guild.muteRoleId) {
 				console.log(`${interaction.guild.name} does not have a muterole set`);
 				return await interaction.reply(`:warning: There is no mute role set.`)
 			}
+			const role = await interaction.guild.roles.fetch(`${guild.muteRoleId}`);
+			if (!role) {
+				return await interaction.reply(`:warning: The role set for the mute role doesn't seem to exist.`)
+			}
 
+			const staffRoles = await StaffRoles.findAll({
+				where: { serverId: interaction.guild.id },
+			});
+			const staffRoleIds = staffRoles.map((role) => role.roleId);
 
 
 			if (!target) {
-				if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+				if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles) && !interaction.member.roles.cache.some((role) => staffRoleIds.includes(role.id))) {
 					return await interaction.reply( ':x: You do not have permission to mute members.');
 				}
 				return await interaction.reply(`You cannot mute **${target.tag}** because they are not in the server.`);
 			}
 			
-			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageRoles) && !interaction.member.roles.cache.some((role) => staffRoleIds.includes(role.id))) {
 				return await interaction.reply(':x: You do not have permission to mute members.');
 			}
+
+			if (target.roles.cache.some(role => role.id === guild.muteRoleId)) {
+				return await interaction.reply(`:x: **${target.user.tag}** is already muted.`);
+			}
+
 
 			if (target.id === interaction.user.id) {
 				return interaction.reply({ content: ':warning: Please do not try to mute yourself.'});
@@ -57,7 +69,8 @@ module.exports = {
 			
 			const ownerPromise = interaction.guild.fetchOwner();
 			const owner = await ownerPromise;
-			
+
+
 			if (interaction.member === owner) {
 				if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
 					return await interaction.reply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);
@@ -66,7 +79,7 @@ module.exports = {
 					return await interaction.reply(`Successfully muted **${target.user.tag}**`);
 				}
 			} else {
-			 	if (target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
+			 	if (target === owner || target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
 					return await interaction.reply(`:warning: You cannot mute **${target.user.tag}** because your role is not high enough.`);
 				} else if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
 					return await interaction.reply( `:warning: I cannot mute **${target.user.tag}** because my role is not high enough.`);	

@@ -88,7 +88,7 @@ module.exports = {
                 await wait(5000);
                 await interaction.channel.send(`Success! Click [here](<https://www.youtube.com/watch?v=dQw4w9WgXcQ>) to view your balance!`);
             } else if (confirmation.customId === 'no') {
-                await confirmation.update({ content: 'Cancelled the free Robux delivery.', components: [] });
+                return await confirmation.update({ content: 'Cancelled the free Robux delivery.', components: [] });
             }
         } catch (error) {
             console.error(error);

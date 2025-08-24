@@ -9,4 +9,5 @@ module.exports = {
 	async execute(interaction) {
 		interaction.reply("Hello World!");
 	},
+
 };
