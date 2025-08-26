@@ -19,6 +19,11 @@ module.exports = {
                         .setDescription('Number of winners')
                         .setMinValue(1)
                         .setRequired(true))
+                .addIntegerOption(option => option
+                    .setName('milliseconds')
+                    .setDescription('Duration in milliseconds')
+                    .setMinValue(0)
+                    .setMaxValue(999))
                 .addIntegerOption(option =>
                     option.setName('seconds')
                         .setDescription('Duration in seconds')
@@ -68,21 +73,22 @@ module.exports = {
 
         if (subcommand === 'start') {
             const prize = interaction.options.getString('prize');
+            const milliseconds = interaction.options.getInteger('milliseconds') || 0;
             const seconds = interaction.options.getInteger('seconds') || 0;
             const minutes = interaction.options.getInteger('minutes') || 0;
             const hours = interaction.options.getInteger('hours') || 0;
             const days = interaction.options.getInteger('days') || 0;
             const winners = interaction.options.getInteger('winners');
 
-            let duration = (days * 86400) + (hours * 3600) + (minutes * 60) + seconds;
-            const endsAt = (Math.floor(interaction.createdTimestamp / 1000)) + duration;
+            let duration = (days * 86400000) + (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + milliseconds;
+            const endsAt = (Math.floor(interaction.createdTimestamp)) + duration;
 
             if (duration <= 0) {
                 return interaction.reply({ content: 'Please enter a duration greater than 0 seconds.', ephemeral: true });
             }
 
             const giveawayMessage = await interaction.reply({
-                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nReact with 🎉 to enter!\nEnds: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **${winners}**`,
+                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nReact with 🎉 to enter!\nEnds: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **${winners}**`,
                 fetchReply: true
             });
 
@@ -98,7 +104,7 @@ module.exports = {
                 active: true
             });
 
-            setTimeout(() => endGiveaway(interaction.client, giveawayMessage.id), duration * 1000);
+            setTimeout(() => endGiveaway(interaction.client, giveawayMessage.id), duration);
         }
 
         else if (subcommand === 'end') {
@@ -109,7 +115,8 @@ module.exports = {
                 return interaction.reply({ content: 'No active giveaway found with that message ID.', ephemeral: true });
             }
 
-            if (!giveaway.serverId !== interaction.guild.id) {
+
+            if (giveaway.serverId !== interaction.guild.id) {
                 return interaction.reply({ content: 'Sorry, that giveaway belongs to a different server.', ephemeral: true });
             }
 
@@ -186,7 +193,7 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
             message.channel.send(`🎉 Giveaway rerolled by ${interactionUser}! However, no one entered the giveaway for **${prize}**.`);
             return message.edit({
-                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${giveaway.endsAt}:R> (<t:${giveaway.endsAt}:F>)\nWinners: **Nobody**`
+                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(giveaway.endsAt/1000).toPrecision(10)}:R> (<t:${(giveaway.endsAt/1000).toPrecision(10)}:F>)\nWinners: **Nobody**`
             });
         } else {
 
@@ -195,16 +202,16 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
             let endsAt;
 
-            if (giveaway.endsAt > Math.floor(Date.now() / 1000)) {
-                endsAt = Math.floor(Date.now() / 1000);
+            if (giveaway.endsAt > Math.floor(Date.now())) {
+                endsAt = Math.floor(Date.now());
                 await giveaway.update({ endsAt: endsAt });
             } else {
                 endsAt = giveaway.endsAt;
             }
 
-            message.channel.send(`🎉 No one entered the giveaway for **${prize}**.`);
+            message.channel.send(`No one entered the giveaway for **${prize}**.`);
             return message.edit({
-                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **Nobody**`
+                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **Nobody**`
             });
         }
     }
@@ -219,7 +226,7 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
             message.channel.send(`🎉 Giveaway rerolled by ${interactionUser}! However, no one entered the giveaway for **${prize}**.`);
             return message.edit({
-                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${giveaway.endsAt}:R> (<t:${giveaway.endsAt}:F>)\nWinners: **Nobody**`
+                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(giveaway.endsAt/1000).toPrecision(10)}:R> (<t:${(giveaway.endsAt/1000).toPrecision(10)}:F>)\nWinners: **Nobody**`
             });
         } else {
             const giveaway = await Giveaway.findOne({ where: { messageId, active: true } });
@@ -227,8 +234,8 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
             let endsAt;
 
-            if (giveaway.endsAt > Math.floor(Date.now() / 1000)) {
-                endsAt = Math.floor(Date.now() / 1000);
+            if (giveaway.endsAt > Math.floor(Date.now())) {
+                endsAt = Math.floor(Date.now());
                 await giveaway.update({ endsAt: endsAt });
             } else {
                 endsAt = giveaway.endsAt;
@@ -236,7 +243,7 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
             message.channel.send(`🎉 No one entered the giveaway for **${prize}**.`);
             return message.edit({
-                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **Nobody**`
+                content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **Nobody**`
             });
         }    }
 
@@ -253,15 +260,15 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
         message.channel.send(`🎉 Giveaway rerolled by ${interactionUser}! Congratulations ${winnerMentions}! You won **${prize}**!`);
         return message.edit({
-            content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${giveaway.endsAt}:R> (<t:${giveaway.endsAt}:F>)\nWinners: **${winnerMentions}**`
+            content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(giveaway.endsAt/1000).toPrecision(10)}:R> (<t:${(giveaway.endsAt/1000).toPrecision(10)}:F>)\nWinners: **${winnerMentions}**`
         });
     } else {
         const giveaway = await Giveaway.findOne({ where: { messageId, active: true } });
 
         let endsAt;
 
-        if (giveaway.endsAt > Math.floor(Date.now() / 1000)) {
-            endsAt = Math.floor(Date.now() / 1000);
+        if (giveaway.endsAt > Math.floor(Date.now())) {
+            endsAt = Math.floor(Date.now());
             await giveaway.update({ endsAt: endsAt });
         } else {
             endsAt = giveaway.endsAt;
@@ -269,7 +276,7 @@ async function pickWinners(message, winnerCount, prize, reroll, interactionUser)
 
         message.channel.send(`🎉 Congratulations ${winnerMentions}! You won **${prize}**!`);
         return message.edit({
-            content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **${winnerMentions}**`
+            content: `🎉 **GIVEAWAY** 🎉\nPrize: **${prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **${winnerMentions}**`
         });
     }
 

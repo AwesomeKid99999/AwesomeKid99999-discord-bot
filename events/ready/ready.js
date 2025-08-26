@@ -81,7 +81,7 @@ module.exports = {
 			// Iterate over active giveaways
 			for (const giveaway of activeGiveaways) {
 
-				const remainingTime = (giveaway.endsAt) - Math.floor(Date.now()/1000);
+				const remainingTime = giveaway.endsAt - Date.now();
 
 
 
@@ -113,7 +113,7 @@ module.exports = {
 
 						if (!reaction) {
 							channel.send(`No one entered the giveaway for **${giveaway.prize}**.`);
-							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **None**`)
+							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **None**`)
 							await giveaway.update({active: false});
 							return;
 						}
@@ -128,7 +128,7 @@ module.exports = {
 
 						if (validUsers.size === 0) {
 							channel.send(`No one entered the giveaway for **${giveaway.prize}**.`);
-							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **None**`)
+							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **None**`)
 							await giveaway.update({active: false});
 							return;
 						}
@@ -142,24 +142,24 @@ module.exports = {
 						// If only one winner
 						if (!Array.isArray(winnersArray)) {
 							channel.send(`🎉 Congratulations <@${winnersArray.id}>! You won **${giveaway.prize}**!`);
-							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinner: **<@${winnersArray.id}>**`)
+							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinner: **<@${winnersArray.id}>**`)
 							await giveaway.update({active: false});
 						} else if (winnersArray.length > 0) {
 							// If multiple winners are picked
 							const winnerMentions = winnersArray.map(winner => `<@${winner.id}>`).join(', ');
 							channel.send(`🎉 Congratulations ${winnerMentions}! You won **${giveaway.prize}**!`);
-							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **${winnerMentions}**`)
+							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **${winnerMentions}**`)
 							await giveaway.update({active: false});
 						} else {
 							// Not enough participants
 							channel.send(`Not enough participants entered for **${giveaway.prize}**. Giveaway ended.`);
-							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${endsAt}:R> (<t:${endsAt}:F>)\nWinners: **None**`)
+							message.edit(`🎉 **GIVEAWAY** 🎉\nPrize: **${giveaway.prize}**\nEnded: <t:${(endsAt/1000).toPrecision(10)}:R> (<t:${(endsAt/1000).toPrecision(10)}:F>)\nWinners: **None**`)
 							await giveaway.update({active: false});
 						}
 					} catch (error) {
 						console.error(`Error handling giveaway ID ${giveaway.messageId}:`, error);
 					}
-				}, remainingTime * 1000);
+				}, remainingTime);
 			}
 		} catch (error) {
 			console.error('Error fetching active giveaways:', error);
