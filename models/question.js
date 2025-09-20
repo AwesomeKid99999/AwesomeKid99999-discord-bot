@@ -15,9 +15,17 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        questionText: {
+        QuestionType: {
             type: Sequelize.STRING,
             allowNull: false
+        },
+        QuestionEmbedId: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        questionText: {
+            type: Sequelize.STRING,
+            allowNull: true
         },
     }, {
         timestamps: true,
