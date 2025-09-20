@@ -50,50 +50,6 @@ module.exports = {
         } else {
             console.log(`${message.author.tag} in #${message.channel.name} at ${message.guild.name} said ${message.content} `)
         }
-        const botMention = `<@${message.client.user.id}>`;
-        if (message.content.startsWith(prefix)) {
-            // Get the command name and arguments
-            const args = message.content.slice(prefix.length).trim().split(/ +/);
-            const commandName = args.shift().toLowerCase(); // The command name
-            const command = message.client.commands.get(commandName); // Retrieve the command from the collection
-
-            if (!command) {
-                console.error(`No command matching ${commandName} was found.`);
-                return;
-            }
-
-            try {
-                // Execute the command with the message and arguments
-                await command.execute(message, args);
-                console.log(`${message.author.tag} in ${message.guild.name} triggered the command: ${commandName}`);
-            } catch (error) {
-                console.error(`Error executing ${commandName}`);
-                console.log(`${message.author.tag} in ${message.guild.name} tried executing ${commandName}, but there was an error.`);
-                console.error(error);
-            }
-
-        } else if (message.content.startsWith(botMention)) {
-
-            const args = message.content.slice(botMention.length).trim().split(/ +/);
-            const commandName = args.shift().toLowerCase(); // The command name
-            const command = message.client.commands.get(commandName); // Retrieve the command from the collection
-
-            if (!command) {
-                console.error(`No command matching ${commandName} was found.`);
-                return;
-            }
-
-            try {
-                // Execute the command with the message and arguments
-                await command.execute(message, args);
-                console.log(`${message.author.tag} in ${message.guild.name} triggered the command: ${commandName}`);
-            } catch (error) {
-                console.error(`Error executing ${commandName}`);
-                console.log(`${message.author.tag} in ${message.guild.name} tried executing ${commandName}, but there was an error.`);
-                console.error(error);
-            }
-
-        }
 
 
 
