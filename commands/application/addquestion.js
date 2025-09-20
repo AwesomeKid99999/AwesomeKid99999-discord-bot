@@ -31,7 +31,7 @@ module.exports = {
         // Permission check
         if (
             !interaction.member.roles.cache.some((role) => role.id === guild.staffRoleId) &&
-            !interaction.member.permissions.has(PermissionsBitField.Flags.ManageServer)
+            !interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)
         ) {
             return await interaction.reply({
                 content: 'Sorry, you do not have permission to run this command.',
@@ -42,7 +42,7 @@ module.exports = {
 
 
         // Check if a question with this number already exists
-        const existingQuestion = await Question.findOne({ where: { serverId, questionNumber } });
+        const existingQuestion = await Question.findOne({ where: { serverId, questionNumber, questionType } });
         if (existingQuestion) {
             return interaction.reply({ content: `A question with number ${questionNumber} already exists!`, ephemeral: true });
         }

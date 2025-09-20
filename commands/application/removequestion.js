@@ -26,7 +26,7 @@ module.exports = {
         // Permission check
         if (
             !interaction.member.roles.cache.some((role) => role.id === guild.staffRoleId) &&
-            !interaction.member.permissions.has(PermissionsBitField.Flags.ManageServer)
+            !interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)
         ) {
             return await interaction.reply({
                 content: 'Sorry, you do not have permission to run this command.',
