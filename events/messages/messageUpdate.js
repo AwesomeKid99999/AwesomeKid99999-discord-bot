@@ -43,7 +43,7 @@ module.exports = {
                 return console.log(`${message.guild.name} has an invalid log channel`);
             }
 
-            channel.send(`A message by **${message.author.tag}** with an attachment was updated in <#${message.channelId}>.\nOld: ${message.content}\nNew: ${newMessage.content}`)
+            channel.send({content: `A message by **${message.author.tag}** with an attachment was updated in <#${message.channelId}>.\nOld: ${message.content}\nNew: ${newMessage.content}`, allowedMentions: {users: [], roles: []}})
             message.attachments.forEach(attachment => {
                 // Check if the attachment is an image
                 if (attachment.contentType && attachment.contentType.startsWith('image/')) {
@@ -70,7 +70,7 @@ module.exports = {
                 return console.log(`${message.guild.name} has an invalid log channel`);
             }
 
-            channel.send(`A message by **${message.author.tag}** was updated in <#${message.channelId}>.\nOld: ${message.content}\nNew: ${newMessage.content} `)
+            channel.send({content: `A message by **${message.author.tag}** was updated in <#${message.channelId}>.\nOld: ${message.content}\nNew: ${newMessage.content}`, allowedMentions: {users: [], roles: []}})
         }
 
     },
