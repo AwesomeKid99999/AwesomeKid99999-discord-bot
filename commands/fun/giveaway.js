@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionsBitField} = require('discord.js');
 const {Giveaway} = require('../../models/');
 const endGiveaway = require('../../helpers/giveaway/endGiveaway')
 const pickWinners = require('../../helpers/giveaway/pickWinners')
+const { checkExpiredGiveaways } = require('../../events/ready/giveawayChecker');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -60,7 +61,50 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('message_id')
                         .setDescription('The message ID of the giveaway')
-                        .setRequired(true))),
+                        .setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('edit')
+                .setDescription('Edit an active giveaway. (STAFF ONLY)')
+                .addStringOption(option =>
+                    option.setName('message_id')
+                        .setDescription('The message ID of the giveaway')
+                        .setRequired(true))
+                .addStringOption(option =>
+                    option.setName('prize')
+                        .setDescription('New prize (leave blank to keep)'))
+                .addIntegerOption(option =>
+                    option.setName('winners')
+                        .setDescription('New number of winners')
+                        .setMinValue(1))
+                .addIntegerOption(option => option
+                    .setName('set_milliseconds')
+                    .setDescription('Set new duration: milliseconds (overrides add_seconds)')
+                    .setMinValue(0)
+                    .setMaxValue(999))
+                .addIntegerOption(option =>
+                    option.setName('set_seconds')
+                        .setDescription('Set new duration: seconds (overrides add_seconds)')
+                        .setMinValue(0)
+                        .setMaxValue(59))
+                .addIntegerOption(option =>
+                    option.setName('set_minutes')
+                        .setDescription('Set new duration: minutes (overrides add_seconds)')
+                        .setMinValue(0)
+                        .setMaxValue(59))
+                .addIntegerOption(option =>
+                    option.setName('set_hours')
+                        .setDescription('Set new duration: hours (overrides add_seconds)')
+                        .setMinValue(0)
+                        .setMaxValue(23))
+                .addIntegerOption(option =>
+                    option.setName('set_days')
+                        .setDescription('Set new duration: days (overrides add_seconds)')
+                        .setMinValue(0))
+                .addIntegerOption(option =>
+                    option.setName('add_seconds')
+                        .setDescription('Add/subtract seconds to current end time (use negative to shorten)'))
+        ),
 
     async execute(interaction) {
 
@@ -106,7 +150,11 @@ module.exports = {
                 active: true
             });
 
-            setTimeout(() => endGiveaway(interaction.client, giveawayMessage.id), duration);
+            // For giveaways longer than 24.8 days, we rely on the periodic checker
+            // For shorter giveaways, we can still use setTimeout for immediate response
+            if (duration <= 2147483647) { // Max setTimeout value
+                setTimeout(() => endGiveaway(interaction.client, giveawayMessage.id), duration);
+            }
         }
 
         else if (subcommand === 'end') {
@@ -154,6 +202,81 @@ module.exports = {
 
             await pickWinners(message, giveaway.winnerCount, giveaway.prize, true, interaction.user);
             interaction.reply({ content: 'Winners have been re-rolled!', ephemeral: true });
+        }
+
+        else if (subcommand === 'edit') {
+            const messageId = interaction.options.getString('message_id');
+            const newPrize = interaction.options.getString('prize');
+            const newWinners = interaction.options.getInteger('winners');
+            const setMs = interaction.options.getInteger('set_milliseconds') || 0;
+            const setSec = interaction.options.getInteger('set_seconds') || 0;
+            const setMin = interaction.options.getInteger('set_minutes') || 0;
+            const setHr = interaction.options.getInteger('set_hours') || 0;
+            const setDay = interaction.options.getInteger('set_days') || 0;
+            const addSeconds = interaction.options.getInteger('add_seconds'); // can be negative
+
+            const giveaway = await Giveaway.findOne({ where: { messageId, active: true } });
+            if (!giveaway) {
+                return interaction.reply({ content: 'No active giveaway found with that message ID.', ephemeral: true });
+            }
+            if (giveaway.serverId !== interaction.guild.id) {
+                return interaction.reply({ content: 'Sorry, that giveaway belongs to a different server.', ephemeral: true });
+            }
+
+            if (newPrize === null && newWinners === null && setMs === 0 && setSec === 0 && setMin === 0 && setHr === 0 && setDay === 0 && addSeconds === null) {
+                return interaction.reply({ content: 'Please provide at least one field to edit.', ephemeral: true });
+            }
+
+            let updatedPrize = giveaway.prize;
+            let updatedWinnerCount = giveaway.winnerCount;
+            let updatedEndsAt = giveaway.endsAt;
+
+            if (newPrize !== null) {
+                updatedPrize = newPrize;
+            }
+            if (newWinners !== null) {
+                if (newWinners < 1) {
+                    return interaction.reply({ content: 'Winners must be at least 1.', ephemeral: true });
+                }
+                updatedWinnerCount = newWinners;
+            }
+
+            const hasSetDuration = (setMs + setSec + setMin + setHr + setDay) > 0;
+            if (hasSetDuration) {
+                const duration = (setDay * 86400000) + (setHr * 3600000) + (setMin * 60000) + (setSec * 1000) + setMs;
+                if (duration <= 0) {
+                    return interaction.reply({ content: 'Please set a duration greater than 0 seconds.', ephemeral: true });
+                }
+                updatedEndsAt = Date.now() + duration;
+            } else if (addSeconds !== null) {
+                const delta = addSeconds * 1000;
+                updatedEndsAt = giveaway.endsAt + delta;
+                if (updatedEndsAt <= Date.now()) {
+                    // End immediately if now past due after adjustment
+                    await endGiveaway(interaction.client, giveaway.messageId);
+                    return interaction.reply({ content: 'Giveaway time updated and it has now ended.', ephemeral: true });
+                }
+            }
+
+            await giveaway.update({ prize: updatedPrize, winnerCount: updatedWinnerCount, endsAt: updatedEndsAt });
+
+            // Try to update the original message content
+            const channel = await interaction.client.channels.fetch(giveaway.channelId).catch(() => null);
+            if (channel) {
+                const message = await channel.messages.fetch(giveaway.messageId).catch(() => null);
+                if (message) {
+                    const endsAtTs = (updatedEndsAt/1000).toPrecision(10);
+                    // Try to preserve basic structure; show Winner(s) count
+                    const winnersLabel = 'Winners';
+                    const content = `🎉 **GIVEAWAY** 🎉\nPrize: **${updatedPrize}**\nReact with 🎉 to enter!\nEnds: <t:${endsAtTs}:R> (<t:${endsAtTs}:F>)\n${winnersLabel}: **${updatedWinnerCount}**`;
+                    await message.edit({ content }).catch(() => null);
+                }
+            }
+
+            // Ask checker to rescan now so precise timeout gets scheduled if within window
+            try { await checkExpiredGiveaways(interaction.client); } catch {}
+
+            return interaction.reply({ content: 'Giveaway updated.', ephemeral: true });
         }
     }
 };
