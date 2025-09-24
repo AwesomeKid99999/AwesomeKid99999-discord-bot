@@ -10,8 +10,6 @@ module.exports = {
 		.setDescription("Replies with to the link to the owner's personal website!"),
 	async execute(interaction) {
 		const bot = await interaction.client.application.fetch();
-
-
 		await interaction.reply(`**Owner ${bot.owner.tag}'s website:** ${process.env.OWNER_WEBSITE}`);
 	},
 };

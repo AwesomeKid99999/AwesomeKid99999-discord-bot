@@ -78,27 +78,27 @@ module.exports = {
                         .setDescription('New number of winners')
                         .setMinValue(1))
                 .addIntegerOption(option => option
-                    .setName('set_milliseconds')
+                    .setName('milliseconds')
                     .setDescription('Set new duration: milliseconds (overrides add_seconds)')
                     .setMinValue(0)
                     .setMaxValue(999))
                 .addIntegerOption(option =>
-                    option.setName('set_seconds')
+                    option.setName('seconds')
                         .setDescription('Set new duration: seconds (overrides add_seconds)')
                         .setMinValue(0)
                         .setMaxValue(59))
                 .addIntegerOption(option =>
-                    option.setName('set_minutes')
+                    option.setName('minutes')
                         .setDescription('Set new duration: minutes (overrides add_seconds)')
                         .setMinValue(0)
                         .setMaxValue(59))
                 .addIntegerOption(option =>
-                    option.setName('set_hours')
+                    option.setName('hours')
                         .setDescription('Set new duration: hours (overrides add_seconds)')
                         .setMinValue(0)
                         .setMaxValue(23))
                 .addIntegerOption(option =>
-                    option.setName('set_days')
+                    option.setName('days')
                         .setDescription('Set new duration: days (overrides add_seconds)')
                         .setMinValue(0))
                 .addIntegerOption(option =>
@@ -241,13 +241,18 @@ module.exports = {
                 updatedWinnerCount = newWinners;
             }
 
+            const giveawayMessageId = giveaway.messageId;
+            const giveawayChannelId = giveaway.channelId;
+            const giveawayChannel = await interaction.client.channels.cache.get(giveawayChannelId);
+            const giveawayMessage = await giveawayChannel.messages.fetch(giveawayMessageId);
+
             const hasSetDuration = (setMs + setSec + setMin + setHr + setDay) > 0;
             if (hasSetDuration) {
                 const duration = (setDay * 86400000) + (setHr * 3600000) + (setMin * 60000) + (setSec * 1000) + setMs;
                 if (duration <= 0) {
                     return interaction.reply({ content: 'Please set a duration greater than 0 seconds.', ephemeral: true });
                 }
-                updatedEndsAt = Date.now() + duration;
+                updatedEndsAt = giveawayMessage.createdTimestamp + duration;
             } else if (addSeconds !== null) {
                 const delta = addSeconds * 1000;
                 updatedEndsAt = giveaway.endsAt + delta;
