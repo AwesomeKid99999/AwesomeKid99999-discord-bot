@@ -1,14 +1,19 @@
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
-const { Guild, Question } = require('../../models');
+const { Guild, Question, Embed } = require('../../models');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('listquestions')
         .setDMPermission(false)
-        .setDescription('List all staff application questions for this server.'),
+        .setDescription('List all staff application questions for this server.')
+        .addStringOption(option =>
+            option.setName('type')
+                .setDescription('Filter questions by type (optional)')
+                .setRequired(false)),
 
     async execute(interaction) {
         const serverId = interaction.guild.id; // Get the server's ID
+        const questionType = interaction.options.getString('type')?.toLowerCase();
 
         const guild = await Guild.findOne({ where: { serverId: serverId } });
         if (!guild) {
@@ -33,33 +38,70 @@ module.exports = {
 
 
         try {
+            // Build where clause based on whether type filter is provided
+            const whereClause = { serverId: serverId };
+            if (questionType) {
+                whereClause.QuestionType = questionType;
+            }
+
             // Fetch questions from the database for the current server
             const questions = await Question.findAll({
-                where: { serverId: serverId },
+                where: whereClause,
                 order: [['questionNumber', 'ASC']], // Order questions by their number
             });
 
             // If no questions are found
             if (questions.length === 0) {
+                const message = questionType 
+                    ? `There are no ${questionType} application questions set up for this server.`
+                    : 'There are no staff application questions set up for this server.';
                 return interaction.reply({
-                    content: 'There are no staff application questions set up for this server.',
+                    content: message,
                     ephemeral: true,
                 });
             }
 
-            // Create a message listing the questions
-            const questionList = questions
-                .map(
-                    (question) =>
-                        `**Question ${question.questionNumber}:** ${question.questionText}`
-                )
-                .join('\n');
+            // Create a message listing the questions with embed information
+            const questionList = [];
+            
+            for (const question of questions) {
+                let questionText = `**Question ${question.questionNumber}:**`;
+                
+                // Add question type
+                questionText += ` *[${question.QuestionType}]*`;
+                
+                // Add question text if it exists, otherwise show placeholder
+                if (question.questionText) {
+                    questionText += ` ${question.questionText}`;
+                } else if (question.QuestionEmbedId || question.questionImage) {
+                    questionText += ` View image/embed below`;
+                }
+                
+                // Add embed information if it exists
+                if (question.QuestionEmbedId) {
+                    const embed = await Embed.findOne({ where: { id: question.QuestionEmbedId } });
+                    if (embed) {
+                        questionText += ` *(Embed: ${embed.embedName})*`;
+                    } else {
+                        questionText += ` *(Embed: Deleted/Invalid)*`;
+                    }
+                }
+                
+                // Add image information if it exists
+                if (question.questionImage) {
+                    questionText += ` *(Image)*`;
+                }
+                
+                questionList.push(questionText);
+            }
+            
+            const questionListString = questionList.join('\n');
 
             // Split the message into chunks if it exceeds 2000 characters
             const splitMessages = [];
             let chunk = '';
 
-            questionList.split('\n').forEach((line) => {
+            questionListString.split('\n').forEach((line) => {
                 if (chunk.length + line.length + 1 > 2000) {
                     splitMessages.push(chunk);
                     chunk = '';

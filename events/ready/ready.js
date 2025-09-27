@@ -1,7 +1,7 @@
 const { Events } = require('discord.js');
-const {Application, Giveaway, XPIgnoredChannels, XPSettings} = require('../../models');
+const {Application, Giveaway, XPIgnoredChannels, XPSettings, Guild} = require('../../models');
 const { startGiveawayChecker } = require('./giveawayChecker');
-
+const { Op } = require('sequelize');
 
 module.exports = {
 	name: Events.ClientReady,
@@ -10,11 +10,15 @@ module.exports = {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
 
+
 		// Iterate through all guilds the bot is in
 		for (const guild of client.guilds.cache.values()) {
 
 			try {
-				const applications = await Application.findAll({ where: { serverId: guild.id, status: 'pending' } });
+				const applications = await Application.findAll({ where: { serverId: guild.id, status: 'pending', 
+					channelId: {
+					[Op.ne]: "SYSTEM" 
+				  } } });
 
 				for (const application of applications) {
 					const channel = guild.channels.cache.get(application.channelId);
@@ -23,6 +27,37 @@ module.exports = {
 						// If the channel does not exist, handle the orphaned application
 						console.log(`Application for channel ${application.channelId} is orphaned. Cleaning up...`);
 
+						const guild = await Guild.findOne({ where: { serverId: application.serverId } });
+						if (!guild) {
+						   return console.log(`Guild ${application.serverId} does not exist in the database`);
+						}
+						console.log(`Deleting application linked to channel: ${application.channelId}`);
+
+                // Fetch the original message from the staff response channel
+                if (!guild.applicationChannelId) {
+                    console.log(`Application response channel has not been found for guild ${application.serverId}`);
+                } else {
+                    try {
+                        const staffChannel = await client.guilds.cache.get(application.serverId).channels.fetch(guild.applicationChannelId);
+                        const confirmationMessageId = application.confirmationId;
+                        
+                        if (confirmationMessageId) {
+                            try {
+                                const staffMessage = await staffChannel.messages.fetch(confirmationMessageId);
+                                await staffMessage.delete();
+                                console.log(`Deleted confirmation message ${confirmationMessageId} for orphaned application`);
+                            } catch (error) {
+                                console.log(`Could not delete confirmation message ${confirmationMessageId}:`, error.message);
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Could not fetch staff channel ${guild.applicationChannelId} for guild ${application.serverId}:`, error.message);
+                    }
+                }
+
+			
+			
+						
 						// Delete or update the application in the database
 						await Application.destroy({ where: { id: application.id } }); // Or mark as 'deleted'
 					}

@@ -5,34 +5,49 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('cancelapplication')
         .setDescription('Cancel your application.')
-        .setDMPermission(false),
+        .setDMPermission(false)
+        .addStringOption(option =>
+            option.setName('type')
+                .setDescription('The type of application you want to cancel (single word only)')
+                .setRequired(true)
+                .setMaxLength(50)),
     async execute(interaction) {
         const userId = interaction.user.id;
         const serverId = interaction.guild.id;
+        const applicationType = interaction.options.getString('type').toLowerCase();
+        
+        // Validate that application type is a single word
+        if (applicationType.includes(' ') || applicationType.includes('-') || applicationType.includes('_')) {
+            return await interaction.reply({
+                content: 'Application type must be a single word (no spaces, hyphens, or underscores).',
+                ephemeral: true,
+            });
+        }
+        
         const guild = await Guild.findOne({where: {serverId: await interaction.guild.id}});
 
         // Check if the user already has an application channel
         const existingChannel = interaction.guild.channels.cache.find(
-            (channel) => channel.name === `application-${interaction.user.username.toLowerCase()}` && channel.type === 0 // 0 = GuildText
+            (channel) => channel.name === `application-${applicationType}-${interaction.user.username.toLowerCase()}` && channel.type === 0 // 0 = GuildText
         );
 
 
         try {
             // Find the application for the user
             const application = await Application.findOne({
-                where: { userId: userId, serverId: serverId, status: 'pending' },
+                where: { userId: userId, serverId: serverId, status: 'pending', applicationType: applicationType },
             });
 
             if (!application && existingChannel) {
                 existingChannel.delete();
                 return interaction.reply({
-                    content: 'Deleted in progress application.',
+                    content: 'Deleted in progress application with type ' + applicationType + '.',
                     ephemeral: true,
                 });
             }
             if (!application) {
                 return interaction.reply({
-                    content: 'You do not have a pending application to cancel.',
+                    content: 'You do not have a pending application with type ' + applicationType + ' to cancel.',
                     ephemeral: true,
                 });
             }
@@ -68,7 +83,7 @@ module.exports = {
 
             // Notify the user
             await interaction.reply({
-                content: 'Your application has been successfully canceled.',
+                content: 'Your application with type ' + applicationType + ' has been successfully canceled.',
                 ephemeral: true,
             });
 

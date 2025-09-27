@@ -38,10 +38,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true
         },
-        applicationToggle: {
-            type: Sequelize.BOOLEAN,
-            allowNull: true
-        },
         messageLogChannelId: {
             type: Sequelize.STRING,
             allowNull: true

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionsBitField} = require('discord.js');
-const {Question, Guild} = require('../../models/');
+const {Question, Guild, Embed} = require('../../models/');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,10 +9,24 @@ module.exports = {
         .addIntegerOption(option =>
             option.setName('number')
                 .setDescription('The question number to remove')
-                .setRequired(true)),
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('type')
+                .setDescription('The type of question to remove (single word only)')
+                .setRequired(true)
+                .setMaxLength(50)),
     async execute(interaction) {
         const serverId = interaction.guild.id;
         const questionNumber = interaction.options.getInteger('number');
+        const questionType = interaction.options.getString('type').toLowerCase();
+
+        // Validate that question type is a single word
+        if (questionType.includes(' ') || questionType.includes('-') || questionType.includes('_')) {
+            return await interaction.reply({
+                content: 'Question type must be a single word (no spaces, hyphens, or underscores).',
+                ephemeral: true,
+            });
+        }
 
         const guild = await Guild.findOne({ where: { serverId: serverId } });
         if (!guild) {
@@ -34,13 +48,34 @@ module.exports = {
             });
         }
 
-        // Find and delete the question
-        const deleted = await Question.destroy({ where: { serverId, questionNumber } });
+        // Find the question first to get embed information
+        const question = await Question.findOne({ where: { serverId, questionNumber, QuestionType: questionType } });
 
-        if (!deleted) {
-            return interaction.reply({ content: `No question found with number ${questionNumber}.`, ephemeral: true });
+        if (!question) {
+            return interaction.reply({ content: `No question found with number ${questionNumber} with type **${questionType}**.`, ephemeral: true });
         }
 
-        interaction.reply({ content: `Removed question ${questionNumber}.`});
+        // Get embed information if it exists
+        let embedInfo = '';
+        if (question.QuestionEmbedId) {
+            const embed = await Embed.findOne({ where: { id: question.QuestionEmbedId } });
+            if (embed) {
+                embedInfo = ` with embed **${embed.embedName}**`;
+            } else {
+                embedInfo = ` with embed **Deleted/Invalid**`;
+            }
+        }
+
+        // Get image information if it exists
+        let imageInfo = '';
+        if (question.questionImage) {
+            imageInfo = ` with image`;
+        }
+
+        // Delete the question
+        await Question.destroy({ where: { serverId, questionNumber, QuestionType: questionType } });
+
+        const textInfo = question.questionText ? `: "${question.questionText}"` : '';
+        interaction.reply({ content: `Removed question ${questionNumber}${textInfo}${embedInfo}${imageInfo} (Type: ${questionType}).`});
     }
 };

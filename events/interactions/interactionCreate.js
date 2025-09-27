@@ -31,15 +31,18 @@ module.exports = {
 
 
 		} else if (interaction.isModalSubmit()) {
-			const [action, userId] = interaction.customId.split('-');
+			const [action, userId, applicationType] = interaction.customId.split('-');
 			const serverId = interaction.guild.id;
+
+			// Defer the modal interaction to prevent timeout
+			await interaction.deferReply({ ephemeral: true });
 
 			if (action === 'accept_reason_modal') {
 				const reason = interaction.fields.getTextInputValue('reason');
-				await acceptApplication(interaction, userId, reason, serverId);
+				await acceptApplication(interaction, userId, reason, serverId, applicationType);
 			} else if (action === 'deny_reason_modal') {
 				const reason = interaction.fields.getTextInputValue('reason');
-				await denyApplication(interaction, userId, reason, serverId);
+				await denyApplication(interaction, userId, reason, serverId, applicationType);
 			}
 		}
 

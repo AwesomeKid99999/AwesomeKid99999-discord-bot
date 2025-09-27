@@ -21,9 +21,17 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         },
+        applicationType: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
         response: {
             type: Sequelize.JSON,
             allowNull: false
+        },
+        applicationToggle: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true
         },
         status: {
             type: Sequelize.ENUM('pending', 'accepted', 'denied'),

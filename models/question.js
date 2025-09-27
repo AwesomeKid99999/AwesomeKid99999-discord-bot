@@ -27,6 +27,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true
         },
+        questionImage: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
     }, {
         timestamps: true,
     });

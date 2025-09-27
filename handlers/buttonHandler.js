@@ -4,19 +4,23 @@ const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = req
 const { acceptApplication, denyApplication } = require('../helpers/applicationActions');
 
 module.exports = async (interaction) => {
-    const [action, userId] = interaction.customId.split('-');
+    const [action, userId, applicationType] = interaction.customId.split('-');
     const serverId = interaction.guild.id;
 
     switch (action) {
         case 'accept':
-            await acceptApplication(interaction, userId, "No specific reason provided", serverId);
+            // Defer the interaction to prevent timeout
+            await interaction.deferReply({ ephemeral: true });
+            await acceptApplication(interaction, userId, "No specific reason provided", serverId, applicationType);
             break;
         case 'deny':
-            await denyApplication(interaction, userId, "No specific reason provided", serverId);
+            // Defer the interaction to prevent timeout
+            await interaction.deferReply({ ephemeral: true });
+            await denyApplication(interaction, userId, "No specific reason provided", serverId, applicationType);
             break;
         case 'accept_reason': {
             const modal = new ModalBuilder()
-                .setCustomId(`accept_reason_modal-${userId}`)
+                .setCustomId(`accept_reason_modal-${userId}-${applicationType}`)
                 .setTitle('Accept Application with Reason');
 
             const reasonInput = new TextInputBuilder()
@@ -36,7 +40,7 @@ module.exports = async (interaction) => {
 
         case 'deny_reason': {
             const modal = new ModalBuilder()
-                .setCustomId(`deny_reason_modal-${userId}`)
+                .setCustomId(`deny_reason_modal-${userId}-${applicationType}`)
                 .setTitle('Deny Application with Reason');
 
             const reasonInput = new TextInputBuilder()
