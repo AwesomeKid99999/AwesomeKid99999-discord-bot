@@ -5,7 +5,7 @@ const { acceptApplication } = require('../../helpers/applicationActions');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('accept')
-        .setDescription('Accept a staff application. (STAFF ONLY)')
+        .setDescription('Accept an application. (STAFF ONLY)')
         .setDMPermission(false)
         .addUserOption(option => option
             .setName('user')

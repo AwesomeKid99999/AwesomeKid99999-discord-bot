@@ -4,7 +4,7 @@ const {Guild, Application} = require('../../models/')
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('applicationtoggle')
-        .setDescription('Open or close staff applications in the server. (STAFF ONLY)')
+        .setDescription('Open or close a type of application in the server. (STAFF ONLY)')
         .setDMPermission(false)
         .addStringOption(option =>
             option.setName('type')

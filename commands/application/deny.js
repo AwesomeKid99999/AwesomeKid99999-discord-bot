@@ -4,7 +4,7 @@ const { denyApplication} = require("../../helpers/applicationActions");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('deny')
-        .setDescription('Deny a staff application. (STAFF ONLY)')
+        .setDescription('Deny an application. (STAFF ONLY)')
         .setDMPermission(false)
         .addUserOption(option => option
             .setName('user')
