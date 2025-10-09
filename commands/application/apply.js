@@ -156,6 +156,21 @@ module.exports = {
         // Start the application process
         try {
             const responses = {};
+            const responseMessageIdByQuestion = {};
+            const onMessageUpdate = async (oldMessage, newMessage) => {
+                try {
+                    if (!newMessage || !newMessage.author || newMessage.author.bot) return;
+                    if (newMessage.channelId !== applicationChannel.id) return;
+                    if (newMessage.author.id !== user.id) return;
+                    for (const [qNum, msgId] of Object.entries(responseMessageIdByQuestion)) {
+                        if (newMessage.id === msgId) {
+                            responses[`Question ${qNum}`] = newMessage.content;
+                            break;
+                        }
+                    }
+                } catch {}
+            };
+            interaction.client.on('messageUpdate', onMessageUpdate);
             await applicationChannel.send(`${user}, welcome to your ${applicationType} application! Please answer the following questions one by one.`);
 
             for (const question of questions) {
@@ -234,9 +249,10 @@ module.exports = {
                 // Wait for the user's response
                 const filter = (response) => response.author.id === user.id;
                 const collected = await applicationChannel.awaitMessages({ filter, max: 1, time: 900000, errors: ['time'] });
-
-                const answer = collected.first().content;
+                const responseMessage = collected.first();
+                const answer = responseMessage.content;
                 responses[`Question ${question.questionNumber}`] = answer;
+                responseMessageIdByQuestion[question.questionNumber] = responseMessage.id;
             }
 
             try {
@@ -326,13 +342,16 @@ module.exports = {
 
 
 
+                interaction.client.off('messageUpdate', onMessageUpdate);
                 return await applicationChannel.send(`${user}, thank you for completing your **${applicationType}** application! It has been submitted for review.`);
             } catch (error) {
                 console.error('Error while saving application:', error);
+                interaction.client.off('messageUpdate', onMessageUpdate);
                 return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/apply\` again.`);
             }
         } catch (error) {
             console.error(error);
+            try { interaction.client.off('messageUpdate', onMessageUpdate); } catch {}
             return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/apply\` again.`);
         }
     },
