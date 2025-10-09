@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require ('discord.js');
+const SixSeven = require('../../helpers/SixSeven')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -157,18 +158,32 @@ module.exports = {
         
         
                 let num3 = num1 + num2;
-        
+
+                // 9 + 10 = 21 meme
                 if ((num1 == 9 && num2 == 10) || (num1 == 10 && num2 == 9)) {
-                    num3 = 21;
+                    num3 = "21 (I'm stupid) ||and the actual answer is 19||";
                 }
-        
+
+                // check if any number has six seven
+                num1 = SixSeven(num1);
+                num2 = SixSeven(num2);
+                num3 = SixSeven(num3);
+
+
                 return await interaction.reply(`The **sum** of **${num1}** and **${num2}** is **${num3}**.`);
             } else if (interaction.options.getSubcommand() === 'subtract') {
                 let num1 = interaction.options.getNumber('first');
                 let num2 = interaction.options.getNumber('second');
         
                 let num3 = num1 - num2;
-        
+
+                // check if any number has six seven
+                num1 = SixSeven(num1);
+                num2 = SixSeven(num2);
+                num3 = SixSeven(num3);
+
+
+
                 return await interaction.reply(`The **difference** of **${num1}** and **${num2}** is **${num3}**.`);
         
             } else if (interaction.options.getSubcommand() === 'multiply') {
@@ -176,14 +191,28 @@ module.exports = {
                 let num2 = interaction.options.getNumber('second');
         
                 let num3 = num1 * num2;
-        
+
+                // check if any number has six seven
+                num1 = SixSeven(num1);
+                num2 = SixSeven(num2);
+                num3 = SixSeven(num3);
+
+
+
                 return await interaction.reply(`The **product** of **${num1}** and **${num2}** is **${num3}**.`);
             } else if (interaction.options.getSubcommand() === 'divide') {
                 let num1 = interaction.options.getNumber('first');
                 let num2 = interaction.options.getNumber('second');
         
                 let num3 = num1 / num2;
-        
+
+                // check if any number has six seven
+                num1 = SixSeven(num1);
+                num2 = SixSeven(num2);
+                num3 = SixSeven(num3);
+
+
+
                 if ((num1 === 0) && (num2 === 0)) {
                    return await interaction.reply(`You cannot **divide 0 by 0**. (**${num1}/${num2}** is **indeterminate**)`);
                 } else if (num2 === 0) {
@@ -196,6 +225,14 @@ module.exports = {
                 let power = interaction.options.getNumber('power');
 
                 let result = Math.pow(base, power);
+
+                // check if any number has six seven
+                base = SixSeven(base);
+                power = SixSeven(power);
+                result = SixSeven(result);
+
+
+
                 return await interaction.reply(`**${base}** to the **power** of **${power}** is **${result}**.`);
             }
         }
@@ -206,18 +243,30 @@ module.exports = {
                 let width = interaction.options.getNumber('width');
 
                 let area = length * width;
-                
+                // check if any number has six seven
+                length = SixSeven(length);
+                width = SixSeven(width);
+                area = SixSeven(area);
+
                 return await interaction.reply(`The **area** of a **rectangle** with **length ${length}** and **width ${width}** is **${area}**.`);
 
             } else if (interaction.options.getSubcommand() === 'square') {
                 let length = interaction.options.getNumber('length');
 
                 let area = Math.pow(length, 2);
+                // check if any number has six seven
+                length = SixSeven(length);
+                area = SixSeven(area);
 
                 return await interaction.reply(`The **area** of a **square** with **side length ${length}** is **${area}**.`);
             } else if (interaction.options.getSubcommand() === 'circle') {
                 let radius = interaction.options.getNumber('radius');
                 let area = Math.PI * Math.pow(radius, 2);
+
+
+                // check if any number has six seven
+                radius = SixSeven(radius);
+                area = SixSeven(area);
 
                 return await interaction.reply(`The **area** of a **circle** with **radius ${radius}** is **${area}**.`);
 
@@ -225,6 +274,11 @@ module.exports = {
                 let base = interaction.options.getNumber('base');
                 let height = interaction.options.getNumber('height');
                 let area = (1/2) * base * height;
+
+                // check if any number has six seven
+                base = SixSeven(base);
+                height = SixSeven(height);
+                area = SixSeven(area);
 
                 return await interaction.reply(`The **area** of a **triangle** with **base ${base}** and **height ${height}** is **${area}**.`);
 
@@ -236,6 +290,12 @@ module.exports = {
                 let s = (side1+side2+side3)/2;
 
                 let area = Math.sqrt(s * (s - side1) * (s - side2) * (s - side3));
+
+                // check if any number has six seven
+                side1 = SixSeven(side1);
+                side2 = SixSeven(side2);
+                side3 = SixSeven(side3);
+                area = SixSeven(area);
 
                 return await interaction.reply(`The **area** of a **triangle** with **side 1 of length ${side1}**, **side 2 of length ${side2}**, and **side 3 of length ${side3}** is **${area}**.`);
 

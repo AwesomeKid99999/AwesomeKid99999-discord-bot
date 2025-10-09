@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require ('discord.js');
+const SixSeven = require("../../helpers/SixSeven");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -47,7 +48,10 @@ module.exports = {
         }
 
         let resultIntPart = decimalIntPart.toString(toBase);
-    
+
+        value = SixSeven(value);
+        resultIntPart = SixSeven(resultIntPart);
+
         if (!fracPart) return await interaction.reply(`The number **${value} (in base ${fromBase})** converted to **base ${toBase}** would be **${resultIntPart}**`); // No fractional part, return integer result
     
         // Convert the fractional part
@@ -64,9 +68,8 @@ module.exports = {
             decimalFracPart -= fracDigit;
             if (decimalFracPart === 0) break;
         }
-    
 
-
+        resultFracPart = SixSeven(resultFracPart);
 
 
        return await interaction.reply(`The number **${value} (in base ${fromBase})** converted to **base ${toBase}** would be **${resultIntPart}.${resultFracPart}**`);
