@@ -42,5 +42,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true
         },
+        memesEnabled: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true
+        },
     });
 };

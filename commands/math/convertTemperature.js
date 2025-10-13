@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require ('discord.js');
 const SixSeven = require('../../helpers/SixSeven');
+const { Guild } = require('../../models');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -52,52 +53,54 @@ module.exports = {
 
     async execute(interaction) {
        const option = interaction.options.getSubcommand();
+       const guild = await Guild.findOne({ where: { serverId: interaction.guild.id } }).catch(() => null);
+       const ssEnabled = guild ? !!guild.memesEnabled : true;
 
        if (option === 'fahrenheit_to_celsius') {
            let temperature = interaction.options.getNumber('degrees')
            let result = (5/9) * (temperature - 32);
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            return await interaction.reply(`**${temperature} degrees Fahrenheit** is equal to **${result} degrees Celsius**`);
        }
 
        if (option === 'celsius_to_fahrenheit') {
            let temperature = interaction.options.getNumber('degrees')
            let result = ((9/5) * temperature) + 32;
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            return await interaction.reply(`**${temperature} degrees Celsius** is equal to **${result} degrees Fahrenheit**`);
        }
 
        if (option === 'fahrenheit_to_kelvin') {
            let temperature = interaction.options.getNumber('degrees')
            let result = (5/9) * (temperature - 32) + 273.15;
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            await interaction.reply(`**${temperature} degrees Fahrenheit** is equal to **${result} degrees Kelvin**`);
        }
 
        if (option === 'kelvin_to_fahrenheit') {
            let temperature = interaction.options.getNumber('degrees')
            let result =  ((temperature - 273.15) * (9/5)) + 32;
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            await interaction.reply(`**${temperature} degrees Kelvin** is equal to **${result} degrees Fahrenheit**`);
        }
 
        if (option === 'celsius_to_kelvin') {
            let temperature = interaction.options.getNumber('degrees')
            let result = temperature + 273.15;
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            await interaction.reply(`**${temperature} degrees Celsius** is equal to **${result} degrees Kelvin**`);
        }
 
        if (option === 'kelvin_to_celsius') {
            let temperature = interaction.options.getNumber('degrees')
            let result = temperature - 273.15;
-           temperature = SixSeven(temperature);
-           result = SixSeven(result);
+           temperature = SixSeven(temperature, ssEnabled);
+           result = SixSeven(result, ssEnabled);
            await interaction.reply(`**${temperature} degrees Kelvin** is equal to **${result} degrees Celsius**`);
        }
 

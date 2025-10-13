@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require ('discord.js');
 const SixSeven = require("../../helpers/SixSeven");
+const { Guild } = require('../../models');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,6 +25,8 @@ module.exports = {
             .setMaxValue(36)),
     category: 'math',
     async execute (interaction) {
+        const guild = await Guild.findOne({ where: { serverId: interaction.guild.id } }).catch(() => null);
+        const ssEnabled = guild ? !!guild.memesEnabled : true;
 
 
         let fromBase = interaction.options.getInteger('input_base');
@@ -49,8 +52,8 @@ module.exports = {
 
         let resultIntPart = decimalIntPart.toString(toBase);
 
-        value = SixSeven(value);
-        resultIntPart = SixSeven(resultIntPart);
+        value = SixSeven(value, ssEnabled);
+        resultIntPart = SixSeven(resultIntPart, ssEnabled);
 
         if (!fracPart) return await interaction.reply(`The number **${value} (in base ${fromBase})** converted to **base ${toBase}** would be **${resultIntPart}**`); // No fractional part, return integer result
     
@@ -69,7 +72,7 @@ module.exports = {
             if (decimalFracPart === 0) break;
         }
 
-        resultFracPart = SixSeven(resultFracPart);
+        resultFracPart = SixSeven(resultFracPart, ssEnabled);
 
 
        return await interaction.reply(`The number **${value} (in base ${fromBase})** converted to **base ${toBase}** would be **${resultIntPart}.${resultFracPart}**`);

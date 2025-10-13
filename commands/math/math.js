@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require ('discord.js');
 const SixSeven = require('../../helpers/SixSeven')
+const { Guild } = require('../../models')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -149,6 +150,8 @@ module.exports = {
 
     category: 'math',
     async execute (interaction) {
+        const guild = await Guild.findOne({ where: { serverId: interaction.guild.id } }).catch(() => null);
+        const ssEnabled = guild ? !!guild.memesEnabled : true;
 
         // math operations
         if (interaction.options.getSubcommandGroup() === 'operation') {
@@ -159,15 +162,15 @@ module.exports = {
         
                 let num3 = num1 + num2;
 
-                // 9 + 10 = 21 meme
-                if ((num1 == 9 && num2 == 10) || (num1 == 10 && num2 == 9)) {
-                    num3 = "21 (I'm stupid) ||and the actual answer is 19||";
+                // 9 + 10 = 21 meme (respect server toggle)
+                if (ssEnabled && ((num1 == 9 && num2 == 10) || (num1 == 10 && num2 == 9))) {
+                    num3 = "21 (I'm stupid)";
                 }
 
                 // check if any number has six seven
-                num1 = SixSeven(num1);
-                num2 = SixSeven(num2);
-                num3 = SixSeven(num3);
+                num1 = SixSeven(num1, ssEnabled);
+                num2 = SixSeven(num2, ssEnabled);
+                num3 = SixSeven(num3, ssEnabled);
 
 
                 return await interaction.reply(`The **sum** of **${num1}** and **${num2}** is **${num3}**.`);
@@ -178,9 +181,9 @@ module.exports = {
                 let num3 = num1 - num2;
 
                 // check if any number has six seven
-                num1 = SixSeven(num1);
-                num2 = SixSeven(num2);
-                num3 = SixSeven(num3);
+                num1 = SixSeven(num1, ssEnabled);
+                num2 = SixSeven(num2, ssEnabled);
+                num3 = SixSeven(num3, ssEnabled);
 
 
 
@@ -193,9 +196,9 @@ module.exports = {
                 let num3 = num1 * num2;
 
                 // check if any number has six seven
-                num1 = SixSeven(num1);
-                num2 = SixSeven(num2);
-                num3 = SixSeven(num3);
+                num1 = SixSeven(num1, ssEnabled);
+                num2 = SixSeven(num2, ssEnabled);
+                num3 = SixSeven(num3, ssEnabled);
 
 
 
@@ -207,9 +210,9 @@ module.exports = {
                 let num3 = num1 / num2;
 
                 // check if any number has six seven
-                num1 = SixSeven(num1);
-                num2 = SixSeven(num2);
-                num3 = SixSeven(num3);
+                num1 = SixSeven(num1, ssEnabled);
+                num2 = SixSeven(num2, ssEnabled);
+                num3 = SixSeven(num3, ssEnabled);
 
 
 
@@ -227,9 +230,9 @@ module.exports = {
                 let result = Math.pow(base, power);
 
                 // check if any number has six seven
-                base = SixSeven(base);
-                power = SixSeven(power);
-                result = SixSeven(result);
+                base = SixSeven(base, ssEnabled);
+                power = SixSeven(power, ssEnabled);
+                result = SixSeven(result, ssEnabled);
 
 
 
@@ -244,9 +247,9 @@ module.exports = {
 
                 let area = length * width;
                 // check if any number has six seven
-                length = SixSeven(length);
-                width = SixSeven(width);
-                area = SixSeven(area);
+                length = SixSeven(length, ssEnabled);
+                width = SixSeven(width, ssEnabled);
+                area = SixSeven(area, ssEnabled);
 
                 return await interaction.reply(`The **area** of a **rectangle** with **length ${length}** and **width ${width}** is **${area}**.`);
 
@@ -255,8 +258,8 @@ module.exports = {
 
                 let area = Math.pow(length, 2);
                 // check if any number has six seven
-                length = SixSeven(length);
-                area = SixSeven(area);
+                length = SixSeven(length, ssEnabled);
+                area = SixSeven(area, ssEnabled);
 
                 return await interaction.reply(`The **area** of a **square** with **side length ${length}** is **${area}**.`);
             } else if (interaction.options.getSubcommand() === 'circle') {
@@ -265,8 +268,8 @@ module.exports = {
 
 
                 // check if any number has six seven
-                radius = SixSeven(radius);
-                area = SixSeven(area);
+                radius = SixSeven(radius, ssEnabled);
+                area = SixSeven(area, ssEnabled);
 
                 return await interaction.reply(`The **area** of a **circle** with **radius ${radius}** is **${area}**.`);
 
@@ -276,9 +279,9 @@ module.exports = {
                 let area = (1/2) * base * height;
 
                 // check if any number has six seven
-                base = SixSeven(base);
-                height = SixSeven(height);
-                area = SixSeven(area);
+                base = SixSeven(base, ssEnabled);
+                height = SixSeven(height, ssEnabled);
+                area = SixSeven(area, ssEnabled);
 
                 return await interaction.reply(`The **area** of a **triangle** with **base ${base}** and **height ${height}** is **${area}**.`);
 
@@ -292,10 +295,10 @@ module.exports = {
                 let area = Math.sqrt(s * (s - side1) * (s - side2) * (s - side3));
 
                 // check if any number has six seven
-                side1 = SixSeven(side1);
-                side2 = SixSeven(side2);
-                side3 = SixSeven(side3);
-                area = SixSeven(area);
+                side1 = SixSeven(side1, ssEnabled);
+                side2 = SixSeven(side2, ssEnabled);
+                side3 = SixSeven(side3, ssEnabled);
+                area = SixSeven(area, ssEnabled);
 
                 return await interaction.reply(`The **area** of a **triangle** with **side 1 of length ${side1}**, **side 2 of length ${side2}**, and **side 3 of length ${side3}** is **${area}**.`);
 
