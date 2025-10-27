@@ -106,7 +106,7 @@ module.exports = {
 
         }
 
-        await interaction.deferReply();
+        await interaction.deferReply( { ephemeral: true } );
 
 
 

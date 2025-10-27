@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('discord.js');
-const {Embed} = require("../../models/");
+const {Embed, Level, XPSettings} = require("../../models/");
+
+const { getUserLevelingData } = require('../../helpers/leveling/getUserLevelingData');
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -172,6 +175,9 @@ module.exports = {
 			let footerImage = interaction.options.getString('footer_image')
 			let timestamp = interaction.options.getBoolean('timestamp');
 
+			// Get user leveling data
+			const levelingData = await getUserLevelingData(interaction.user.id, interaction.guild.id);
+
 
 
 			if (authorText) {
@@ -181,6 +187,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+					// Add leveling placeholders
+					if (levelingData) {
+						authorText = authorText.replace('{level}', levelingData.level)
+							.replace('{current_xp}', levelingData.currentXp)
+							.replace('{total_xp}', levelingData.totalXp)
+							.replace('{next_level_xp}', levelingData.nextLevelXp)
+							.replace('{rank}', levelingData.rank);
+					}
 
 				}
 			}
@@ -196,6 +211,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
+
+					// Add leveling placeholders
+					if (levelingData) {
+						title = title.replace('{level}', levelingData.level)
+							.replace('{current_xp}', levelingData.currentXp)
+							.replace('{total_xp}', levelingData.totalXp)
+							.replace('{next_level_xp}', levelingData.nextLevelXp)
+							.replace('{rank}', levelingData.rank);
+					}
 				}
 
 
@@ -205,6 +229,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					description = description.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -220,6 +253,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
+
+					// Add leveling placeholders
+					if (levelingData) {
+						footerText = footerText.replace('{level}', levelingData.level)
+							.replace('{current_xp}', levelingData.currentXp)
+							.replace('{total_xp}', levelingData.totalXp)
+							.replace('{next_level_xp}', levelingData.nextLevelXp)
+							.replace('{rank}', levelingData.rank);
+					}
 				}
 
 
@@ -238,15 +280,67 @@ module.exports = {
 			try {
 				const customEmbed = new EmbedBuilder()
 
-					.setColor(color)
-					.setTitle(title)
-					.setAuthor({name: authorText, iconURL: authorImage})
-					.setDescription(description)
-					.setThumbnail(thumbnail)
-					.setImage(image)
-					.setFooter({text: footerText, iconURL: footerImage});
-					
-					if (timestamp) customEmbed.setTimestamp();
+				.setColor(color)
+				.setTitle(title)
+				.setDescription(description)
+			if (authorImage === "{user_avatar}") {
+				customEmbed.setAuthor({
+					name: authorText || interaction.user.username,
+					iconURL: interaction.user.displayAvatarURL({dynamic: true}),
+				});
+			} else if (authorImage === "{server_avatar}") {
+				customEmbed.setAuthor({
+					name: authorText || interaction.guild.name,
+					iconURL: interaction.guild.iconURL({dynamic: true}),
+				});
+			} else {
+				customEmbed.setAuthor({
+					name: authorText || null,
+					iconURL: authorImage || null,
+				})
+			}
+
+
+			if (thumbnail === "{user_avatar}") {
+				customEmbed.setThumbnail(interaction.user.displayAvatarURL({dynamic: true}));
+			} else if (thumbnail === "{server_avatar}") {
+				customEmbed.setThumbnail(interaction.guild.iconURL({dynamic: true}));
+			} else {
+				customEmbed.setThumbnail(thumbnail)
+			}
+			if (image === "{user_avatar}") {
+				customEmbed.setImage(interaction.user.displayAvatarURL({dynamic: true}));
+			} else if (image === "{server_avatar}") {
+				customEmbed.setImage(interaction.guild.iconURL({dynamic: true}));
+			} else {
+				customEmbed.setImage(image)
+			}
+
+			if (footerImage === "{user_avatar}") {
+				// Replace the placeholder with the actual user avatar URL
+				customEmbed.setFooter({
+					text: footerText || '', // If footerText is provided, use it; otherwise, use an empty string
+					iconURL: interaction.user.displayAvatarURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
+				});
+			} else if (footerImage === "{server_avatar}") {
+				// Replace the placeholder with the actual user avatar URL
+				customEmbed.setFooter({
+					text: footerText, // If footerText is provided, use it; otherwise, use an empty string
+					iconURL: interaction.guild.iconURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
+				});
+			} else if (footerImage && isValidImageUrl(footerImage)) {
+				// If the footerImage is a valid image URL, set it as the icon
+				customEmbed.setFooter({
+					text: footerText,
+					iconURL: footerImage
+				});
+			} else {
+				// If no valid footerImage, just set the footer text
+				customEmbed.setFooter({
+					text: footerText
+				});
+			}
+				if (timestamp) customEmbed.setTimestamp();
 					
 
 
@@ -303,6 +397,9 @@ module.exports = {
 			if (footerText) footerText = footerText.replace(/\\n/g, '\n');
 			let footerImage = interaction.options.getString('footer_image')
 			let timestamp = interaction.options.getBoolean('timestamp');
+
+			// Get user leveling data
+			const levelingData = await getUserLevelingData(interaction.user.id, interaction.guild.id);
 
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
 				return await interaction.reply('Sorry, you do not have permission to run this command.');
@@ -364,6 +461,15 @@ module.exports = {
 						.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 						.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
+
+					// Add leveling placeholders
+					if (levelingData) {
+						authorText = authorText.replace('{level}', levelingData.level)
+							.replace('{current_xp}', levelingData.currentXp)
+							.replace('{total_xp}', levelingData.totalXp)
+							.replace('{next_level_xp}', levelingData.nextLevelXp)
+							.replace('{rank}', levelingData.rank);
+					}
 				}
 
 
@@ -377,6 +483,14 @@ module.exports = {
 						.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
+					// Add leveling placeholders
+					if (levelingData) {
+						title = title.replace('{level}', levelingData.level)
+							.replace('{current_xp}', levelingData.currentXp)
+							.replace('{total_xp}', levelingData.totalXp)
+							.replace('{next_level_xp}', levelingData.nextLevelXp)
+							.replace('{rank}', levelingData.rank);
+					}
 				}
 
 
@@ -541,6 +655,9 @@ module.exports = {
 			let footerImage = interaction.options.getString('footer_image')
 			let timestamp = interaction.options.getBoolean('timestamp');
 
+			// Get user leveling data
+			const levelingData = await getUserLevelingData(interaction.user.id, interaction.guild.id);
+
 
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
 				return await interaction.reply('Sorry, you do not have permission to run this command.');
@@ -603,6 +720,14 @@ module.exports = {
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
+				// Add leveling placeholders
+				if (levelingData) {
+					authorText = authorText.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -613,7 +738,15 @@ module.exports = {
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
-			}
+				// Add leveling placeholders
+				if (levelingData) {
+					title = title.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
+				}
 
 
 			if (description && !description.startsWith(`\\`)) {
@@ -622,6 +755,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					description = description.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -631,6 +773,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					footerText = footerText.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -804,6 +955,8 @@ module.exports = {
 
 			const name = interaction.options.getString('name');
 
+			// Get user leveling data
+			const levelingData = await getUserLevelingData(interaction.user.id, interaction.guild.id);
 
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
 				return await interaction.reply('Sorry, you do not have permission to run this command.');
@@ -836,6 +989,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					authorText = authorText.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -849,6 +1011,14 @@ module.exports = {
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
+				// Add leveling placeholders
+				if (levelingData) {
+					title = title.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 

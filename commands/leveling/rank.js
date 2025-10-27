@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require('discord.js');
-const {Level, XPSettings} = require('../../models')
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const {Level, XPSettings, Embed} = require('../../models')
 
 
 module.exports = {
@@ -54,7 +54,219 @@ module.exports = {
 
         const rank = await usersXP.findIndex(user => user.userId === userId)+1;
 
-        // Send a message with the user's rank, XP, and level
+        // Check if there's a custom rank message or embed in XP settings
+        const rankMessage = xpSettings.rankMessage;
+        const rankEmbedId = xpSettings.rankEmbedId;
+
+        // Handle embed-only rank display
+        if (rankEmbedId && !rankMessage) {
+            const rankEmbed = await Embed.findOne({ where: { id: rankEmbedId } });
+            
+            if (!rankEmbed) {
+                console.error(`Rank embed ${rankEmbedId} not found for server ${serverId}`);
+                // Fallback to default message
+                return interaction.reply(`**${user.username}'s Rank** in **${interaction.guild.name}**\n**Level:** ${userXP.level}\n**Current XP:** ${userXP.currentXp}/${nextLevelXP}\n**Total XP:** ${userXP.totalXp}\n**Rank:** #${rank}`);
+            }
+
+            if (!rankEmbed.isActive) {
+                console.log(`Rank embed ${rankEmbedId} is not active for server ${serverId}`);
+                // Fallback to default message
+                return interaction.reply(`**${user.username}'s Rank** in **${interaction.guild.name}**\n**Level:** ${userXP.level}\n**Current XP:** ${userXP.currentXp}/${nextLevelXP}\n**Total XP:** ${userXP.totalXp}\n**Rank:** #${rank}`);
+            }
+
+            // Create embed with rank data
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: rankEmbed.authorText ? rankEmbed.authorText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', user.username)
+                            .replace('{tag}', user.tag)
+                            .replace('{server}', interaction.guild.name)
+                            .replace('{server_members}', interaction.guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: rankEmbed.authorImage ? rankEmbed.authorImage
+                        .replace('{user_avatar}', user.displayAvatarURL({ dynamic: true }))
+                        .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true })) : null
+                })
+                .setTitle(rankEmbed.title ? rankEmbed.title
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', user.username)
+                        .replace('{tag}', user.tag)
+                        .replace('{server}', interaction.guild.name)
+                        .replace('{server_members}', interaction.guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setDescription(rankEmbed.description ? rankEmbed.description
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', user.username)
+                        .replace('{tag}', user.tag)
+                        .replace('{server}', interaction.guild.name)
+                        .replace('{server_members}', interaction.guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setThumbnail(rankEmbed.thumbnail === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                    rankEmbed.thumbnail === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                        rankEmbed.thumbnail || null)
+                .setFooter({
+                    text: rankEmbed.footerText ? rankEmbed.footerText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', user.username)
+                            .replace('{tag}', user.tag)
+                            .replace('{server}', interaction.guild.name)
+                            .replace('{server_members}', interaction.guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: rankEmbed.footerImage === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                        rankEmbed.footerImage === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                            (rankEmbed.footerImage || null)
+                })
+                .setColor(rankEmbed.color || null)
+                .setImage(rankEmbed.image === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                    rankEmbed.image === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                        rankEmbed.image || null);
+
+            if (rankEmbed.timestamp) embed.setTimestamp();
+
+            return interaction.reply({ embeds: [embed] });
+        }
+
+        // Handle message-only rank display
+        if (rankMessage && !rankEmbedId) {
+            const formattedMessage = rankMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', user.username)
+                .replace('{tag}', user.tag)
+                .replace('{server}', interaction.guild.name)
+                .replace('{server_members}', interaction.guild.memberCount)
+                .replace('{level}', userXP.level)
+                .replace('{current_xp}', userXP.currentXp)
+                .replace('{total_xp}', userXP.totalXp)
+                .replace('{next_level_xp}', nextLevelXP)
+                .replace('{rank}', rank);
+
+            return interaction.reply(formattedMessage);
+        }
+
+        // Handle both message and embed
+        if (rankMessage && rankEmbedId) {
+            const rankEmbed = await Embed.findOne({ where: { id: rankEmbedId } });
+            
+            if (!rankEmbed) {
+                console.error(`Rank embed ${rankEmbedId} not found for server ${serverId}`);
+                // Fallback to message only
+                const formattedMessage = rankMessage
+                    .replace('{user}', `<@${userId}>`)
+                    .replace('{username}', user.username)
+                    .replace('{tag}', user.tag)
+                    .replace('{server}', interaction.guild.name)
+                    .replace('{server_members}', interaction.guild.memberCount)
+                    .replace('{level}', userXP.level)
+                    .replace('{current_xp}', userXP.currentXp)
+                    .replace('{total_xp}', userXP.totalXp)
+                    .replace('{next_level_xp}', nextLevelXP)
+                    .replace('{rank}', rank);
+                return interaction.reply(formattedMessage);
+            }
+
+            const formattedMessage = rankMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', user.username)
+                .replace('{tag}', user.tag)
+                .replace('{server}', interaction.guild.name)
+                .replace('{server_members}', interaction.guild.memberCount)
+                .replace('{level}', userXP.level)
+                .replace('{current_xp}', userXP.currentXp)
+                .replace('{total_xp}', userXP.totalXp)
+                .replace('{next_level_xp}', nextLevelXP)
+                .replace('{rank}', rank);
+
+            if (!rankEmbed.isActive) {
+                return interaction.reply(`${formattedMessage}\n(The embed associated with the rank message is not active.)`);
+            }
+
+            // Create embed with rank data
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: rankEmbed.authorText ? rankEmbed.authorText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', user.username)
+                            .replace('{tag}', user.tag)
+                            .replace('{server}', interaction.guild.name)
+                            .replace('{server_members}', interaction.guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: rankEmbed.authorImage ? rankEmbed.authorImage
+                        .replace('{user_avatar}', user.displayAvatarURL({ dynamic: true }))
+                        .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true })) : null
+                })
+                .setTitle(rankEmbed.title ? rankEmbed.title
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', user.username)
+                        .replace('{tag}', user.tag)
+                        .replace('{server}', interaction.guild.name)
+                        .replace('{server_members}', interaction.guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setDescription(rankEmbed.description ? rankEmbed.description
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', user.username)
+                        .replace('{tag}', user.tag)
+                        .replace('{server}', interaction.guild.name)
+                        .replace('{server_members}', interaction.guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setThumbnail(rankEmbed.thumbnail === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                    rankEmbed.thumbnail === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                        rankEmbed.thumbnail || null)
+                .setFooter({
+                    text: rankEmbed.footerText ? rankEmbed.footerText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', user.username)
+                            .replace('{tag}', user.tag)
+                            .replace('{server}', interaction.guild.name)
+                            .replace('{server_members}', interaction.guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: rankEmbed.footerImage === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                        rankEmbed.footerImage === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                            (rankEmbed.footerImage || null)
+                })
+                .setColor(rankEmbed.color || null)
+                .setImage(rankEmbed.image === "{user_avatar}" ? user.displayAvatarURL({ dynamic: true }) :
+                    rankEmbed.image === "{server_avatar}" ? interaction.guild.iconURL({ dynamic: true }) :
+                        rankEmbed.image || null);
+
+            if (rankEmbed.timestamp) embed.setTimestamp();
+
+            return interaction.reply({ content: formattedMessage, embeds: [embed] });
+        }
+
+        // Default fallback message
         return interaction.reply(`**${user.username}'s Rank** in **${interaction.guild.name}**\n**Level:** ${userXP.level}\n**Current XP:** ${userXP.currentXp}/${nextLevelXP}\n**Total XP:** ${userXP.totalXp}\n**Rank:** #${rank}
         `);
     },

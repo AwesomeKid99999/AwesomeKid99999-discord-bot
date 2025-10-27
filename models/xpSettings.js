@@ -48,11 +48,24 @@ module.exports = (sequelize, Sequelize) => {
         },
         levelUpMessage: {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: true,
             defaultValue: `{user}, you have reached **level {level}**. GG!`
         },
         levelUpChannelId: {
             type: Sequelize.STRING,
+            allowNull: true,
+        },
+        levelUpEmbedId: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        },
+        rankMessage: {
+            type: Sequelize.STRING,
+            allowNull: true,
+            defaultValue: `**{username}'s Rank** in **{server}**\n**Level:** {level}\n**Current XP:** {current_xp}/{next_level_xp}\n**Total XP:** {total_xp}\n**Rank:** #{rank}`
+        },
+        rankEmbedId: {
+            type: Sequelize.INTEGER,
             allowNull: true,
         },
 

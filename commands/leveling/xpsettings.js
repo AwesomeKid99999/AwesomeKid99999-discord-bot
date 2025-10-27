@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
-const {XPSettings, Level} = require('../../models/');
+const {XPSettings, Level, Embed} = require('../../models/');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -58,7 +58,16 @@ module.exports = {
                 .setDescription('Message to display when a user levels up'))
             .addChannelOption(option => option
                 .setName('levelupchannel')
-                .setDescription('The channel to send the level up message')))
+                .setDescription('The channel to send the level up message'))
+            .addStringOption(option => option
+                .setName('levelupembed')
+                .setDescription('The name of the embed to show for level up messages (leave empty to remove)'))
+            .addStringOption(option => option
+                .setName('rankmessage')
+                .setDescription('Message to display when using the rank command'))
+            .addStringOption(option => option
+                .setName('rankembed')
+                .setDescription('The name of the embed to show for rank command (leave empty to remove)')))
         .addSubcommand(subcommand => subcommand
             .setName('view')
             .setDescription('View the XP settings for the server. (STAFF ONLY)')),
@@ -86,6 +95,9 @@ module.exports = {
             const cooldown = xpSettings.cooldown;
             const levelUpMessage = xpSettings.levelUpMessage;
             const levelUpChannelId = xpSettings.levelUpChannelId;
+            const levelUpEmbedId = xpSettings.levelUpEmbedId;
+            const rankMessage = xpSettings.rankMessage;
+            const rankEmbedId = xpSettings.rankEmbedId;
             const enabled = xpSettings.enabled;
             const startingLevel = xpSettings.startingLevel;
 
@@ -97,7 +109,30 @@ module.exports = {
                 if (!levelUpChannel) {
                     return interaction.reply({ content: 'The level up channel no longer exists.', ephemeral: true });
                 }
+            }
 
+            let levelUpEmbed;
+            if (!levelUpEmbedId) {
+                levelUpEmbed = "none"
+            } else {
+                const embed = await Embed.findOne({ where: { id: levelUpEmbedId } });
+                if (!embed) {
+                    levelUpEmbed = "deleted embed"
+                } else {
+                    levelUpEmbed = embed.embedName;
+                }
+            }
+
+            let rankEmbed;
+            if (!rankEmbedId) {
+                rankEmbed = "none"
+            } else {
+                const embed = await Embed.findOne({ where: { id: rankEmbedId } });
+                if (!embed) {
+                    rankEmbed = "deleted embed"
+                } else {
+                    rankEmbed = embed.embedName;
+                }
             }
 
              return await interaction.reply({
@@ -113,6 +148,9 @@ module.exports = {
             **Starting Level:** ${startingLevel}
             **Level Up Message:** \`${levelUpMessage}\`
             **Level Up Channel:** ${levelUpChannel}
+            **Level Up Embed:** ${levelUpEmbed}
+            **Rank Message:** \`\`\`${rankMessage}\`\`\`
+            **Rank Embed:** ${rankEmbed}
             **Enabled?** ${enabled}`,
             });
 
@@ -132,6 +170,9 @@ module.exports = {
             const cooldown = interaction.options.getInteger('cooldown');
             const levelUpMessage = interaction.options.getString('levelupmessage');
             const levelUpChannel = interaction.options.getChannel('levelupchannel');
+            const levelUpEmbed = interaction.options.getString('levelupembed');
+            const rankMessage = interaction.options.getString('rankmessage');
+            const rankEmbed = interaction.options.getString('rankembed');
             const enabled = interaction.options.getBoolean('enabled');
             const startingLevel = interaction.options.getInteger('startinglevel')
 
@@ -151,7 +192,30 @@ module.exports = {
                 });
             }
 
+            // Handle embed validation
+            let levelUpEmbedId = null;
+            if (levelUpEmbed) {
+                const existingEmbed = await Embed.findOne({ where: { serverId: interaction.guild.id, embedName: levelUpEmbed } });
+                if (!existingEmbed) {
+                    return interaction.reply({
+                        content: `The embed **${levelUpEmbed}** does not exist.`,
+                        ephemeral: true,
+                    });
+                }
+                levelUpEmbedId = existingEmbed.id;
+            }
 
+            let rankEmbedId = null;
+            if (rankEmbed) {
+                const existingRankEmbed = await Embed.findOne({ where: { serverId: interaction.guild.id, embedName: rankEmbed } });
+                if (!existingRankEmbed) {
+                    return interaction.reply({
+                        content: `The embed **${rankEmbed}** does not exist.`,
+                        ephemeral: true,
+                    });
+                }
+                rankEmbedId = existingRankEmbed.id;
+            }
 
             await interaction.deferReply({ephemeral: true});
 
@@ -167,8 +231,11 @@ module.exports = {
                     baseXp: baseXp || 100,
                     xpIncrement: xpIncrement || 100,
                     cooldown: cooldown || 60,
-                    levelUpMessage: levelUpMessage || `{user}, you have reached **level {level}**. GG!`,
+                    levelUpMessage: levelUpMessage,
                     levelUpChannelId: levelUpChannel?.id || null,
+                    levelUpEmbedId: levelUpEmbedId,
+                    rankMessage: rankMessage,
+                    rankEmbedId: rankEmbedId,
                     enabled: enabled || false,
                     startingLevel: startingLevel || 1,
                 },
@@ -192,9 +259,12 @@ module.exports = {
             if (baseXp !== null) xpSettings.baseXp = baseXp;
             if (xpIncrement !== null) xpSettings.xpIncrement = xpIncrement;
             if (cooldown !== null) xpSettings.cooldown = cooldown;
-            if (levelUpMessage !== null) xpSettings.levelUpMessage = levelUpMessage;
+            xpSettings.levelUpMessage = levelUpMessage;
             if (startingLevel !== null) xpSettings.startingLevel = startingLevel;
             xpSettings.levelUpChannelId = levelUpChannel?.id || null;
+            xpSettings.levelUpEmbedId = levelUpEmbedId;
+            xpSettings.rankMessage = rankMessage;
+            xpSettings.rankEmbedId = rankEmbedId;
 
             await xpSettings.save();
 
@@ -208,12 +278,15 @@ module.exports = {
             **Multiplier:** ${multiplier}
             **Effort Booster Enabled:** ${effortBooster || false}
             **Effort Booster Multiplier:** ${effortBoosterMultiplier || 'Not set'}
-            **Base XP:** ${baseXp || 'Unchanged (Default: 100)'}
-            **XP Increment:** ${(xpIncrement !== null) ? (xpIncrement) : 'Unchanged (Default: 100)'}
-            **Cooldown:** ${(cooldown !== null) ? (cooldown + " seconds") : ('Unchanged (Default: 60 seconds)')}
-            **Starting Level:** ${(startingLevel !== null) ? (startingLevel) : 'Unchanged (Default: 1)'}
-            **Level Up Message:** ${levelUpMessage || `Unchanged (Default: \`{user}, you have reached **level {level}**. GG!\`)` }
+            **Base XP:** ${baseXp || `Unchanged (Default: 100, but set to \`${xpSettings.baseXp}\`)`}
+            **XP Increment:** ${(xpIncrement !== null) ? (xpIncrement) : `Unchanged (Default: 100, but set to ${xpSettings.xpIncrement})`}
+            **Cooldown:** ${(cooldown !== null) ? (cooldown + " seconds") : (`Unchanged (Default: 60 seconds, but set to \`${xpSettings.cooldown} seconds\`)`)}
+            **Starting Level:** ${(startingLevel !== null) ? (startingLevel) : `Unchanged (Default: 1, but set to ${xpSettings.startingLevel})`}
+            **Level Up Message:** ${levelUpMessage || `none` }
             **Level Up Channel:** ${levelUpChannel || "current channel"}
+            **Level Up Embed:** ${levelUpEmbed || "none"}
+            **Rank Message:** ${rankMessage || `none` }
+            **Rank Embed:** ${rankEmbed || "none"}
             **Enabled?** ${enabled}
             No users' XP was reset.`,
 
@@ -251,12 +324,15 @@ module.exports = {
             **Multiplier:** ${multiplier}
             **Effort Booster Enabled:** ${effortBooster || false}
             **Effort Booster Multiplier:** ${effortBoosterMultiplier || 'Not set'}
-            **Base XP:** ${baseXp || 'Unchanged (Default: 100)'}
-            **XP Increment:** ${(xpIncrement !== null) ? (xpIncrement) : 'Unchanged (Default: 100)'}
-            **Cooldown:** ${(cooldown !== null) ? (cooldown + " seconds") : ('Unchanged (Default: 60 seconds)')}
-            **Starting Level:** ${(startingLevel !== null) ? (startingLevel) : 'Unchanged (Default: 1)'}
-            **Level Up Message:** ${levelUpMessage || `Unchanged (Default: \`{user}, you have reached **level {level}**. GG!\`)` }
+            **Base XP:** ${baseXp || `Unchanged (Default: 100, but set to ${xpSettings.baseXp})`}
+            **XP Increment:** ${(xpIncrement !== null) ? (xpIncrement) : `Unchanged (Default: 100, but set to ${xpSettings.xpIncrement})`}
+            **Cooldown:** ${(cooldown !== null) ? (cooldown + " seconds") : (`Unchanged (Default: 60 seconds, but set to ${xpSettings.cooldown} seconds)`)}
+            **Starting Level:** ${(startingLevel !== null) ? (startingLevel) : `Unchanged (Default: 1, but set to ${xpSettings.startingLevel})`}
+            **Level Up Message:** ${levelUpMessage || 'none' }
             **Level Up Channel:** ${levelUpChannel || "current channel"}
+            **Level Up Embed:** ${levelUpEmbed || "none"}
+            **Rank Message:** ${rankMessage || `none` }
+            **Rank Embed:** ${rankEmbed || "none"}
             **Enabled?** ${enabled}`,
                 ephemeral: true,
             });

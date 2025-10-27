@@ -56,7 +56,7 @@ module.exports = {
             return interaction.reply('Bots cannot lose XP.');
         }
 
-        await interaction.deferReply();
+        await interaction.deferReply( { ephemeral: true } );
         // Remove XP from the user
         const { actualXPRemoved, newLevel, currentXP } = await removeXP(user.id, serverId, xpToRemove);
 

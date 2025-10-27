@@ -1,5 +1,6 @@
 
-const {Level, XPSettings, LevelRoles} = require('../../models')
+const {Level, XPSettings, LevelRoles, Embed} = require('../../models')
+const {EmbedBuilder} = require('discord.js')
 
 async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
     const xpSettings = await XPSettings.findOne({
@@ -10,7 +11,7 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
 
     const xpBase = xpSettings.baseXp; // Base XP required for level 1
     const xpIncrement = xpSettings.xpIncrement; // Additional XP required per level
-    const levelUpMessage = xpSettings.levelUpMessage;
+    const levelUpMessage = xpSettings.levelUpMessage ?? `{user}, you have reached **level {level}**. GG!`;
     const startingLevel = xpSettings.startingLevel;
 
     // Find or create the user's XP record
@@ -87,12 +88,221 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
             currentXP: userXP.currentXp,
         };
 
-        return channel.send(levelUpMessage
-            .replace('{user}', `<@${userId}>`) // Mention the user
-            .replace('{username}', member.user.username) // Username of the user
-            .replace('{tag}', member.user.tag) // Full tag of the user (e.g., "User#1234")
-            .replace('{level}', userXP.level) // Current level
-        );
+        // Handle level up message with embed support
+        const levelUpChannelId = xpSettings.levelUpChannelId;
+        const levelUpEmbedId = xpSettings.levelUpEmbedId;
+        
+        // Determine which channel to send to
+        const targetChannel = levelUpChannelId ? 
+            await guild.channels.fetch(levelUpChannelId).catch(() => null) : 
+            channel;
+        
+        if (!targetChannel) {
+            console.error(`Level up channel ${levelUpChannelId} not found for server ${serverId}`);
+            return;
+        }
+
+        // Handle embed-only level up
+        if (levelUpEmbedId && !levelUpMessage) {
+            const levelUpEmbed = await Embed.findOne({ where: { id: levelUpEmbedId } });
+            
+            if (!levelUpEmbed) {
+                console.error(`Level up embed ${levelUpEmbedId} not found for server ${serverId}`);
+                return;
+            }
+
+            if (!levelUpEmbed.isActive) {
+                console.log(`Level up embed ${levelUpEmbedId} is not active for server ${serverId}`);
+                return;
+            }
+
+            // Get user leveling data for embed placeholders
+            const allUsers = await Level.findAll({
+                where: { serverId: serverId },
+                order: [['totalXp', 'DESC']]
+            });
+            const rank = allUsers.findIndex(user => user.userId === userId) + 1;
+            const nextLevelXP = xpBase + (xpIncrement * (userXP.level - startingLevel));
+
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: levelUpEmbed.authorText ? levelUpEmbed.authorText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', member.user.username)
+                            .replace('{tag}', member.user.tag)
+                            .replace('{server}', guild.name)
+                            .replace('{server_members}', guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: levelUpEmbed.authorImage ? levelUpEmbed.authorImage
+                        .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
+                        .replace('{server_avatar}', guild.iconURL({ dynamic: true })) : null
+                })
+                .setTitle(levelUpEmbed.title ? levelUpEmbed.title
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setDescription(levelUpEmbed.description ? levelUpEmbed.description
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setThumbnail(levelUpEmbed.thumbnail === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                    levelUpEmbed.thumbnail === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                        levelUpEmbed.thumbnail || null)
+                .setFooter({
+                    text: levelUpEmbed.footerText ? levelUpEmbed.footerText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', member.user.username)
+                            .replace('{tag}', member.user.tag)
+                            .replace('{server}', guild.name)
+                            .replace('{server_members}', guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: levelUpEmbed.footerImage === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                        levelUpEmbed.footerImage === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                            (levelUpEmbed.footerImage || null)
+                })
+                .setColor(levelUpEmbed.color || null)
+                .setImage(levelUpEmbed.image === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                    levelUpEmbed.image === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                        levelUpEmbed.image || null);
+
+            if (levelUpEmbed.timestamp) embed.setTimestamp();
+
+            return targetChannel.send({ embeds: [embed] });
+        }
+
+        // Handle message-only level up
+        if (levelUpMessage && !levelUpEmbedId) {
+            const formattedMessage = levelUpMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', member.user.username)
+                .replace('{tag}', member.user.tag)
+                .replace('{level}', userXP.level);
+
+            return targetChannel.send(formattedMessage);
+        }
+
+        // Handle both message and embed
+        if (levelUpMessage && levelUpEmbedId) {
+            const levelUpEmbed = await Embed.findOne({ where: { id: levelUpEmbedId } });
+            
+            if (!levelUpEmbed) {
+                console.error(`Level up embed ${levelUpEmbedId} not found for server ${serverId}`);
+                // Fallback to message only
+                const formattedMessage = levelUpMessage
+                    .replace('{user}', `<@${userId}>`)
+                    .replace('{username}', member.user.username)
+                    .replace('{tag}', member.user.tag)
+                    .replace('{level}', userXP.level);
+                return targetChannel.send(formattedMessage);
+            }
+
+            const formattedMessage = levelUpMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', member.user.username)
+                .replace('{tag}', member.user.tag)
+                .replace('{level}', userXP.level);
+
+            if (!levelUpEmbed.isActive) {
+                return targetChannel.send(`${formattedMessage}\n(The embed associated with the level up message is not active.)`);
+            }
+
+            // Get user leveling data for embed placeholders
+            const allUsers = await Level.findAll({
+                where: { serverId: serverId },
+                order: [['totalXp', 'DESC']]
+            });
+            const rank = allUsers.findIndex(user => user.userId === userId) + 1;
+            const nextLevelXP = xpBase + (xpIncrement * (userXP.level - startingLevel));
+
+            const embed = new EmbedBuilder()
+                .setAuthor({
+                    name: levelUpEmbed.authorText ? levelUpEmbed.authorText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', member.user.username)
+                            .replace('{tag}', member.user.tag)
+                            .replace('{server}', guild.name)
+                            .replace('{server_members}', guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: levelUpEmbed.authorImage ? levelUpEmbed.authorImage
+                        .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
+                        .replace('{server_avatar}', guild.iconURL({ dynamic: true })) : null
+                })
+                .setTitle(levelUpEmbed.title ? levelUpEmbed.title
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setDescription(levelUpEmbed.description ? levelUpEmbed.description
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null)
+                .setThumbnail(levelUpEmbed.thumbnail === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                    levelUpEmbed.thumbnail === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                        levelUpEmbed.thumbnail || null)
+                .setFooter({
+                    text: levelUpEmbed.footerText ? levelUpEmbed.footerText
+                            .replace('{user}', `<@${userId}>`)
+                            .replace('{username}', member.user.username)
+                            .replace('{tag}', member.user.tag)
+                            .replace('{server}', guild.name)
+                            .replace('{server_members}', guild.memberCount)
+                            .replace('{level}', userXP.level)
+                            .replace('{current_xp}', userXP.currentXp)
+                            .replace('{total_xp}', userXP.totalXp)
+                            .replace('{next_level_xp}', nextLevelXP)
+                            .replace('{rank}', rank): null,
+                    iconURL: levelUpEmbed.footerImage === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                        levelUpEmbed.footerImage === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                            (levelUpEmbed.footerImage || null)
+                })
+                .setColor(levelUpEmbed.color || null)
+                .setImage(levelUpEmbed.image === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
+                    levelUpEmbed.image === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
+                        levelUpEmbed.image || null);
+
+            if (levelUpEmbed.timestamp) embed.setTimestamp();
+
+            return targetChannel.send({ content: formattedMessage, embeds: [embed] });
+        }
     }
 
     // Save XP without a level-up
