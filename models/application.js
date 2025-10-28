@@ -1,28 +1,28 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('application', {
         id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
         serverId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false
         },
         userId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false
         },
         channelId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false
         },
-        confirmationId: {
-            type: Sequelize.STRING,
+        confirmationId: { // Sent application ID
+            type: Sequelize.STRING(20),
             allowNull: false
         },
         applicationType: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(50),
             allowNull: false
         },
         response: {

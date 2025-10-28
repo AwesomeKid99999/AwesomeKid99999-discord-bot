@@ -3,19 +3,19 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('XPSettings', {
         serverId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             primaryKey: true,
         },
         minXP: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             defaultValue: 25,
         },
         maxXP: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             defaultValue: 50,
         },
         multiplier: {
-            type: Sequelize.FLOAT,
+            type: Sequelize.DOUBLE,
             defaultValue: 1.0, // Default multiplier
         },
         cooldown: {
@@ -49,7 +49,6 @@ module.exports = (sequelize, Sequelize) => {
         levelUpMessage: {
             type: Sequelize.STRING,
             allowNull: true,
-            defaultValue: `{user}, you have reached **level {level}**. GG!`
         },
         levelUpChannelId: {
             type: Sequelize.STRING,
@@ -62,7 +61,6 @@ module.exports = (sequelize, Sequelize) => {
         rankMessage: {
             type: Sequelize.STRING,
             allowNull: true,
-            defaultValue: `**{username}'s Rank** in **{server}**\n**Level:** {level}\n**Current XP:** {current_xp}/{next_level_xp}\n**Total XP:** {total_xp}\n**Rank:** #{rank}`
         },
         rankEmbedId: {
             type: Sequelize.INTEGER,

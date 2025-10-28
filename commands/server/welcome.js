@@ -17,10 +17,12 @@ module.exports = {
             .setDescription('Add, change, or remove the welcome message in the server. (STAFF ONLY)')
             .addStringOption(option => option
                 .setName('message')
-                .setDescription('The message to set. Use placeholders like {user}, {username}, {tag}, {server}, and \\n for new lines.'))
+                .setDescription('The message to set. Use placeholders like {user}, {username}, {tag}, {server}, and \\n for new lines.')
+                .setMaxLength(1000))
             .addStringOption(option => option
                 .setName('embed')
-                .setDescription('The name of the embed to show (leave empty to remove)')))
+                .setDescription('The name of the embed to show (leave empty to remove)')
+                .setMaxLength(100)))
         .addSubcommand(subcommand => subcommand
             .setName('test')
             .setDescription('Test the welcome message. (STAFF ONLY)')),

@@ -17,13 +17,15 @@ module.exports = {
             .setDescription('Add, change, or remove the leave message in the server. (STAFF ONLY)')
             .addStringOption(option => option
                 .setName('message')
-                .setDescription('The message to set. Use placeholders like {user}, {username}, {tag}, {server}, and \\n for new lines.')))
+                .setDescription('The message to set. Use placeholders like {user}, {username}, {tag}, {server}, and \\n for new lines.')
+                .setMaxLength(1000)))
         .addSubcommand(subcommand => subcommand
             .setName('embed')
-            .setDescription('Add, change, ore remove the leave embed in the server. (STAFF ONLY)')
+            .setDescription('Add, change, or remove the leave embed in the server. (STAFF ONLY)')
             .addStringOption(option => option
                 .setName('name')
-                .setDescription('The name of the embed')))
+                .setDescription('The name of the embed')
+                .setMaxLength(100)))
         .addSubcommand(subcommand => subcommand
             .setName('test')
             .setDescription('Test the leave message. (STAFF ONLY)')),

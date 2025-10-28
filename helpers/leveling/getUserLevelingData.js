@@ -1,3 +1,5 @@
+const {Level, XPSettings} = require('../../models')
+
 // Helper function to get user leveling data
 async function getUserLevelingData(userId, serverId) {
     try {

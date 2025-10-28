@@ -29,6 +29,8 @@ module.exports = {
             .addIntegerOption(option => option
                 .setName('cooldown')
                 .setDescription('Cooldown of earning XP in seconds')
+                .setMinValue(0)
+                .setMaxValue(2147483647)
                 .setRequired(false))
             .addBooleanOption(option => option
                 .setName('effortbooster')
@@ -55,7 +57,8 @@ module.exports = {
                 .setRequired(false))
             .addStringOption(option => option
                 .setName('levelupmessage')
-                .setDescription('Message to display when a user levels up'))
+                .setDescription('Message to display when a user levels up')
+                .setMaxLength(1000))
             .addChannelOption(option => option
                 .setName('levelupchannel')
                 .setDescription('The channel to send the level up message'))
@@ -64,7 +67,8 @@ module.exports = {
                 .setDescription('The name of the embed to show for level up messages (leave empty to remove)'))
             .addStringOption(option => option
                 .setName('rankmessage')
-                .setDescription('Message to display when using the rank command'))
+                .setDescription('Message to display when using the rank command')
+                .setMaxLength(1000))
             .addStringOption(option => option
                 .setName('rankembed')
                 .setDescription('The name of the embed to show for rank command (leave empty to remove)')))

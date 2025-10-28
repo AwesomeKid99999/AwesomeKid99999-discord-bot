@@ -3,54 +3,54 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('embed', {
         id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
         serverId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false
         },
         embedName: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(100),
             allowNull: false,
             unique: true,
         },
         authorText: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(256),
             allowNull: true
         },
         authorImage: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(2048),
             allowNull: true
         },
         title: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(256),
             allowNull: true
         },
         description: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(4096),
             allowNull: true
         },
         thumbnail: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(2048),
             allowNull: true
         },
         image: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(2048),
             allowNull: true
         },
         footerText: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(2048),
             allowNull: true
         },
         footerImage: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(2048),
             allowNull: true
         },
 
         color: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(9),
             allowNull: true
         },
         timestamp: {

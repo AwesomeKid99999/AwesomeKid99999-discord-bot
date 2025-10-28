@@ -18,13 +18,16 @@ module.exports = {
         .addStringOption(option =>
             option.setName('text')
                 .setDescription('The question text (optional if using embed)')
+                .setMaxLength(1000)
                 .setRequired(false))
         .addStringOption(option =>
             option.setName('embed')
-                .setDescription('The name of an embed to use for this question (optional)'))
+                .setDescription('The name of an embed to use for this question (optional)')
+                .setMaxLength(100))
         .addStringOption(option =>
             option.setName('image')
-                .setDescription('URL of an image to display with this question (optional)')),
+                .setDescription('URL of an image to display with this question (optional)')
+                .setMaxLength(2000)),
     async execute(interaction) {
         const serverId = interaction.guild.id;
         const questionNumber = interaction.options.getInteger('number');

@@ -16,6 +16,7 @@ module.exports = {
                 .addStringOption(option =>
                     option.setName('prize')
                         .setDescription('The prize for the giveaway')
+                        .setMaxLength(255)
                         .setRequired(true))
                 .addIntegerOption(option =>
                     option.setName('winners')
@@ -72,7 +73,8 @@ module.exports = {
                         .setRequired(true))
                 .addStringOption(option =>
                     option.setName('prize')
-                        .setDescription('New prize (leave blank to keep)'))
+                        .setDescription('New prize (leave blank to keep)')
+                        .setMaxLength(255))
                 .addIntegerOption(option =>
                     option.setName('winners')
                         .setDescription('New number of winners')

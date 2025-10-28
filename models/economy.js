@@ -2,30 +2,30 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('economy', {
         id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
         userId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false,
         },
         serverId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false,
         },
         wallet: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
         bank: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
         totalMoney: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },

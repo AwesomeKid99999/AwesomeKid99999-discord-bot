@@ -18,10 +18,12 @@ module.exports = {
 				.setMaxLength(256))
 			.addStringOption(option => option
 				.setName('author_image')
-				.setDescription('The author image of the embed (optional)'))	
+				.setDescription('The author image of the embed (optional)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('color')
-				.setDescription('The color of the embed'))
+				.setDescription('The color of the embed')
+				.setMaxLength(9))
 			.addStringOption(option => option
 				.setName('title')
 				.setDescription('The title of the embed')
@@ -32,17 +34,20 @@ module.exports = {
 				.setMaxLength(4096))
 			.addStringOption(option => option
 				.setName('thumbnail')
-				.setDescription('The thumbnail of the embed (use a picture url)'))
+				.setDescription('The thumbnail of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('image')
-				.setDescription('The image of the embed (use a picture url)'))
+				.setDescription('The image of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_text')
 				.setDescription('The footer text of the embed')
 				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_image')
-				.setDescription('The footer image of the embed'))
+				.setDescription('The footer image of the embed')
+				.setMaxLength(2048))
 			.addBooleanOption(option => option
 				.setName('timestamp')
 				.setDescription('Whether or not to include the timestamp in the footer'))
@@ -55,6 +60,7 @@ module.exports = {
 			.addStringOption(option => option
 				.setName('name')
 				.setDescription('The name of the embed')
+				.setMaxLength(100)
 				.setRequired(true))
 			.addStringOption(option => option
 				.setName('author_text')
@@ -62,10 +68,12 @@ module.exports = {
 				.setMaxLength(256))
 			.addStringOption(option => option
 				.setName('author_image')
-				.setDescription('The author image of the embed (optional)'))
+				.setDescription('The author image of the embed (optional)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('color')
-				.setDescription('The color of the embed'))
+				.setDescription('The color of the embed')
+				.setMaxLength(9))
 			.addStringOption(option => option
 				.setName('title')
 				.setDescription('The title of the embed')
@@ -76,17 +84,20 @@ module.exports = {
 				.setMaxLength(4096))
 			.addStringOption(option => option
 				.setName('thumbnail')
-				.setDescription('The thumbnail of the embed (use a picture url)'))
+				.setDescription('The thumbnail of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('image')
-				.setDescription('The image of the embed (use a picture url)'))
+				.setDescription('The image of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_text')
 				.setDescription('The footer text of the embed')
 				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_image')
-				.setDescription('The footer image of the embed'))
+				.setDescription('The footer image of the embed')
+				.setMaxLength(2048))
 			.addBooleanOption(option => option
 				.setName('timestamp')
 				.setDescription('Whether or not to include the timestamp in the footer'))
@@ -98,7 +109,8 @@ module.exports = {
 			.setDescription('Edit a customizable embed for the database. (STAFF ONLY)')
 			.addStringOption(option => option
 				.setName('name')
-				.setDescription('The name of the embed to create')
+				.setDescription('The name of the embed to edit')
+				.setMaxLength(100)
 				.setRequired(true))
 			.addStringOption(option => option
 				.setName('author_text')
@@ -106,10 +118,12 @@ module.exports = {
 				.setMaxLength(256))
 			.addStringOption(option => option
 				.setName('author_image')
-				.setDescription('The author image of the embed (optional)'))
+				.setDescription('The author image of the embed (optional)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('color')
-				.setDescription('The color of the embed'))
+				.setDescription('The color of the embed')
+				.setMaxLength(9))
 			.addStringOption(option => option
 				.setName('title')
 				.setDescription('The title of the embed')
@@ -120,17 +134,20 @@ module.exports = {
 				.setMaxLength(4096))
 			.addStringOption(option => option
 				.setName('thumbnail')
-				.setDescription('The thumbnail of the embed (use a picture url)'))
+				.setDescription('The thumbnail of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('image')
-				.setDescription('The image of the embed (use a picture url)'))
+				.setDescription('The image of the embed (use a picture url)')
+				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_text')
 				.setDescription('The footer text of the embed')
 				.setMaxLength(2048))
 			.addStringOption(option => option
 				.setName('footer_image')
-				.setDescription('The footer image of the embed'))
+				.setDescription('The footer image of the embed')
+				.setMaxLength(2048))
 			.addBooleanOption(option => option
 				.setName('timestamp')
 				.setDescription('Whether or not to include the timestamp in the footer'))
@@ -143,6 +160,7 @@ module.exports = {
 			.addStringOption(option => option
 				.setName('name')
 				.setDescription('The name of the embed to delete')
+				.setMaxLength(100)
 				.setRequired(true)))
 		.addSubcommand(subcommand => subcommand
 			.setName('list')
@@ -152,7 +170,8 @@ module.exports = {
 			.setDescription('Show a customizable embed in the server. (STAFF ONLY)')
 			.addStringOption(option => option
 				.setName('name')
-				.setDescription('The name of the embed to show'))),
+				.setDescription('The name of the embed to show')
+				.setMaxLength(100))),
 		category: 'utility',
 	async execute(interaction) {
 

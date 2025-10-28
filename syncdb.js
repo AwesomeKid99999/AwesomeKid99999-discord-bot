@@ -1,3 +1,7 @@
+require('dotenv').config();
+const sequelize = require('./utilities/database');
+
+
 const { Guild, Giveaway, Question, Application, StaffRoles, CustomRoles, Embed, Level, LevelRoles, XPSettings, XPIgnoredChannels } = require('./models/')
 
 Guild.sync({alter: true});

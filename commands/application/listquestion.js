@@ -9,6 +9,7 @@ module.exports = {
         .addStringOption(option =>
             option.setName('type')
                 .setDescription('Filter questions by type (optional)')
+                .setMaxLength(50)
                 .setRequired(false)),
 
     async execute(interaction) {

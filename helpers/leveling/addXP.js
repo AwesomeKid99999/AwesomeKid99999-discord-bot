@@ -102,10 +102,23 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
             return;
         }
 
+
+
+        // Handle message-only level up
+        if (levelUpMessage && !levelUpEmbedId) {
+            const formattedMessage = levelUpMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', member.user.username)
+                .replace('{tag}', member.user.tag)
+                .replace('{level}', userXP.level);
+
+            return targetChannel.send(formattedMessage);
+        }
+
         // Handle embed-only level up
         if (levelUpEmbedId && !levelUpMessage) {
             const levelUpEmbed = await Embed.findOne({ where: { id: levelUpEmbedId } });
-            
+
             if (!levelUpEmbed) {
                 console.error(`Level up embed ${levelUpEmbedId} not found for server ${serverId}`);
                 return;
@@ -113,7 +126,13 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
 
             if (!levelUpEmbed.isActive) {
                 console.log(`Level up embed ${levelUpEmbedId} is not active for server ${serverId}`);
-                return;
+                const formattedMessage = levelUpMessage
+                    .replace('{user}', `<@${userId}>`)
+                    .replace('{username}', member.user.username)
+                    .replace('{tag}', member.user.tag)
+                    .replace('{level}', userXP.level);
+
+                return targetChannel.send(formattedMessage+"\n(The embed associated with the level up message is not active.)");
             }
 
             // Get user leveling data for embed placeholders
@@ -127,57 +146,57 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
             const embed = new EmbedBuilder()
                 .setAuthor({
                     name: levelUpEmbed.authorText ? levelUpEmbed.authorText
-                            .replace('{user}', `<@${userId}>`)
-                            .replace('{username}', member.user.username)
-                            .replace('{tag}', member.user.tag)
-                            .replace('{server}', guild.name)
-                            .replace('{server_members}', guild.memberCount)
-                            .replace('{level}', userXP.level)
-                            .replace('{current_xp}', userXP.currentXp)
-                            .replace('{total_xp}', userXP.totalXp)
-                            .replace('{next_level_xp}', nextLevelXP)
-                            .replace('{rank}', rank): null,
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null,
                     iconURL: levelUpEmbed.authorImage ? levelUpEmbed.authorImage
                         .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
                         .replace('{server_avatar}', guild.iconURL({ dynamic: true })) : null
                 })
                 .setTitle(levelUpEmbed.title ? levelUpEmbed.title
-                        .replace('{user}', `<@${userId}>`)
-                        .replace('{username}', member.user.username)
-                        .replace('{tag}', member.user.tag)
-                        .replace('{server}', guild.name)
-                        .replace('{server_members}', guild.memberCount)
-                        .replace('{level}', userXP.level)
-                        .replace('{current_xp}', userXP.currentXp)
-                        .replace('{total_xp}', userXP.totalXp)
-                        .replace('{next_level_xp}', nextLevelXP)
-                        .replace('{rank}', rank): null)
+                    .replace('{user}', `<@${userId}>`)
+                    .replace('{username}', member.user.username)
+                    .replace('{tag}', member.user.tag)
+                    .replace('{server}', guild.name)
+                    .replace('{server_members}', guild.memberCount)
+                    .replace('{level}', userXP.level)
+                    .replace('{current_xp}', userXP.currentXp)
+                    .replace('{total_xp}', userXP.totalXp)
+                    .replace('{next_level_xp}', nextLevelXP)
+                    .replace('{rank}', rank): null)
                 .setDescription(levelUpEmbed.description ? levelUpEmbed.description
-                        .replace('{user}', `<@${userId}>`)
-                        .replace('{username}', member.user.username)
-                        .replace('{tag}', member.user.tag)
-                        .replace('{server}', guild.name)
-                        .replace('{server_members}', guild.memberCount)
-                        .replace('{level}', userXP.level)
-                        .replace('{current_xp}', userXP.currentXp)
-                        .replace('{total_xp}', userXP.totalXp)
-                        .replace('{next_level_xp}', nextLevelXP)
-                        .replace('{rank}', rank): null)
+                    .replace('{user}', `<@${userId}>`)
+                    .replace('{username}', member.user.username)
+                    .replace('{tag}', member.user.tag)
+                    .replace('{server}', guild.name)
+                    .replace('{server_members}', guild.memberCount)
+                    .replace('{level}', userXP.level)
+                    .replace('{current_xp}', userXP.currentXp)
+                    .replace('{total_xp}', userXP.totalXp)
+                    .replace('{next_level_xp}', nextLevelXP)
+                    .replace('{rank}', rank): null)
                 .setThumbnail(levelUpEmbed.thumbnail === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
                     levelUpEmbed.thumbnail === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
                         levelUpEmbed.thumbnail || null)
                 .setFooter({
                     text: levelUpEmbed.footerText ? levelUpEmbed.footerText
-                            .replace('{user}', `<@${userId}>`)
-                            .replace('{username}', member.user.username)
-                            .replace('{tag}', member.user.tag)
-                            .replace('{server}', guild.name)
-                            .replace('{server_members}', guild.memberCount)
-                            .replace('{level}', userXP.level)
-                            .replace('{current_xp}', userXP.currentXp)
-                            .replace('{total_xp}', userXP.totalXp)
-                            .replace('{next_level_xp}', nextLevelXP)
-                            .replace('{rank}', rank): null,
+                        .replace('{user}', `<@${userId}>`)
+                        .replace('{username}', member.user.username)
+                        .replace('{tag}', member.user.tag)
+                        .replace('{server}', guild.name)
+                        .replace('{server_members}', guild.memberCount)
+                        .replace('{level}', userXP.level)
+                        .replace('{current_xp}', userXP.currentXp)
+                        .replace('{total_xp}', userXP.totalXp)
+                        .replace('{next_level_xp}', nextLevelXP)
+                        .replace('{rank}', rank): null,
                     iconURL: levelUpEmbed.footerImage === "{user_avatar}" ? member.user.displayAvatarURL({ dynamic: true }) :
                         levelUpEmbed.footerImage === "{server_avatar}" ? guild.iconURL({ dynamic: true }) :
                             (levelUpEmbed.footerImage || null)
@@ -190,17 +209,6 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
             if (levelUpEmbed.timestamp) embed.setTimestamp();
 
             return targetChannel.send({ embeds: [embed] });
-        }
-
-        // Handle message-only level up
-        if (levelUpMessage && !levelUpEmbedId) {
-            const formattedMessage = levelUpMessage
-                .replace('{user}', `<@${userId}>`)
-                .replace('{username}', member.user.username)
-                .replace('{tag}', member.user.tag)
-                .replace('{level}', userXP.level);
-
-            return targetChannel.send(formattedMessage);
         }
 
         // Handle both message and embed

@@ -3,30 +3,30 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('level', {
         id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
         userId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false,
         },
         serverId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: false,
         },
         currentXp: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
         totalXp: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
         level: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 1,
         },
