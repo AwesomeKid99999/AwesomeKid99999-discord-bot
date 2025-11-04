@@ -46,6 +46,11 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.BOOLEAN,
             allowNull: true
         },
+        showAge: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+            defaultValue: false
+        }
 
     });
 

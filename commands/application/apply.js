@@ -260,14 +260,16 @@ module.exports = {
                 for (const question of questions) {
                     const questionText = question.questionText || 'Question with image or embed';
                     const answer = responses[`Question ${question.questionNumber}`];
-                    
+
+
                     // Add indicators for embed and image
                     let questionDisplay = questionText;
                     if (question.QuestionEmbedId) {
-                        questionDisplay += ` [embed]`;
+                        const embed = await Embed.findOne({ where: { id: question.QuestionEmbedId } });
+                        questionDisplay += ` [embed: ${embed.embedName}]`;
                     }
                     if (question.questionImage) {
-                        questionDisplay += ` [image]`;
+                        questionDisplay += ` [image: ${question.questionImage}]`;
                     }
                     
                     applicationContent += `\n**Question ${question.questionNumber}:** ${questionDisplay}\nAnswer: ${answer}\n`;

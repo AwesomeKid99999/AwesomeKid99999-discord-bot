@@ -1,4 +1,4 @@
-const {Guild, Application, Question, StaffRoles } = require("../models/");
+const {Guild, Application, Question, StaffRoles, Embed } = require("../models/");
 const { PermissionsBitField, AttachmentBuilder } = require("discord.js");
 const fs = require("fs");
 
@@ -88,10 +88,11 @@ async function acceptApplication(interaction, userId, reason = null, serverId, a
             // Add indicators for embed and image
             let questionDisplay = questionText || 'Question with image or embed';
             if (question.QuestionEmbedId) {
-                questionDisplay += ` [embed]`;
+                const embed = await Embed.findOne({ where: { id: question.QuestionEmbedId } });
+                questionDisplay += ` [embed: ${embed.embedName}]`;
             }
             if (question.questionImage) {
-                questionDisplay += ` [image]`;
+                questionDisplay += ` [image: ${question.questionImage}]`;
             }
             
             formattedResponses += `\n**Question ${question.questionNumber}:** ${questionDisplay}\nAnswer: ${answer}\n`;
@@ -234,10 +235,11 @@ async function denyApplication(interaction, userId, reason = null, serverId, app
             // Add indicators for embed and image
             let questionDisplay = questionText || 'Question with image or embed';
             if (question.QuestionEmbedId) {
-                questionDisplay += ` [embed]`;
+                const embed = await Embed.findOne({ where: { id: question.QuestionEmbedId } });
+                questionDisplay += ` [embed: ${embed.embedName}]`;
             }
             if (question.questionImage) {
-                questionDisplay += ` [image]`;
+                questionDisplay += ` [image: ${question.questionImage}]`;
             }
             
             formattedResponses += `\n**Question ${question.questionNumber}:** ${questionDisplay}\nAnswer: ${answer}\n`;

@@ -41,10 +41,10 @@ module.exports = {
 				return await interaction.reply('Please don\'t ban me :sob:');
 			}
 
-			if (!interaction.client.member.permissions.has(PermissionsBitField.Flags.BanMembers)) {
+			if (!botMember.permissions.has(PermissionsBitField.Flags.BanMembers)) {
 				return interaction.reply(':warning: I do not have permission to ban users.');
-				
-			}			
+
+			}
 			const highestRole = botMember.roles.highest;
 			const ownerPromise = interaction.guild.fetchOwner();
 			const owner = await ownerPromise;
@@ -53,7 +53,7 @@ module.exports = {
 			if (interaction.member === owner) {
 				if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
 					await interaction.reply({
-						content: ":warning: I don't have permission to ban this member because my role is not high enough.",
+						content: `:warning: I don't have permission to ban ${target.user.tag} because my role is not high enough.`,
 						ephemeral: true
 					});
 
@@ -68,21 +68,21 @@ module.exports = {
 					}
 
 					await interaction.guild.members.ban(target, {reason: `${value} - ${interaction.user.tag}`});
-					await interaction.reply(`Successfully banned **${user.user.tag}**\n**Reason:** ${value}`);
+					await interaction.reply(`Successfully banned **${target.user.tag}**\n**Reason:** ${value}`);
 				}
 			} else if (target === owner || target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
-				  interaction.reply(":warning: You don't have permission to ban this member because your role is not high enough.");
+				  interaction.reply(`:warning: You don't have permission to ban ${target.user.tag} because your role is not high enough.`);
 				  
 		
 				} else if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
-					await interaction.reply(":warning: I don't have permission to ban this member because my role is not high enough.");
+					await interaction.reply(`:warning: I don't have permission to ban ${target.user.tag} because my role is not high enough.`);
 					
 				  } else {
 
 				if (!target.user.bot) {
 					target.send(`You were banned from **${interaction.guild.name}** by **${interaction.user.tag}**.\n**Reason:** ${value}`).catch(async (err) => {
 						console.log(err)
-						return await interaction.reply(`Successfully banned **${user.user.tag}**\n**Reason:** ${value}\nI was unable to DM them`).catch((err) =>{
+						return await interaction.reply(`Successfully banned **${target.user.tag}**\n**Reason:** ${value}\nI was unable to DM them`).catch((err) =>{
 							console.log(err)
 						})
 					})

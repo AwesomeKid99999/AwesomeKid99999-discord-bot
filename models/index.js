@@ -10,9 +10,11 @@ const StaffRoles = require('./staffRoles')(sequelize, Sequelize);
 const CustomRoles = require('./customRoles')(sequelize, Sequelize);
 const Embed = require('./embed')(sequelize, Sequelize);
 const Level = require('./level')(sequelize, Sequelize);
+const GlobalUserLevel = require('./globalUserLevel')(sequelize, Sequelize);
 const LevelRoles = require('./levelRoles')(sequelize, Sequelize);
 const XPSettings = require('./xpSettings')(sequelize, Sequelize);
 const XPIgnoredChannels = require('./xpIgnoredChannels')(sequelize, Sequelize);
+const Birthday = require('./birthday')(sequelize, Sequelize);
 
 // Export centralized library of models
 module.exports = {
@@ -26,7 +28,9 @@ module.exports = {
     CustomRoles,
     Embed,
     Level,
+    GlobalUserLevel,
     LevelRoles,
     XPSettings,
-    XPIgnoredChannels
+    XPIgnoredChannels,
+    Birthday
 };

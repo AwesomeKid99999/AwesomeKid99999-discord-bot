@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events,  ActivityType } = require('discord.js');
 const {Application, Giveaway, XPIgnoredChannels, XPSettings, Guild} = require('../../models');
 const { startGiveawayChecker } = require('./giveawayChecker');
 const { Op } = require('sequelize');
@@ -9,7 +9,11 @@ module.exports = {
 	async execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
-
+		// Set the bot’s status and activity
+		client.user.setPresence({
+			activities: [{ name: 'Hello World!' }],
+			status: 'online', // can be 'online', 'idle', 'dnd', or 'invisible'
+		});
 
 		// Iterate through all guilds the bot is in
 		for (const guild of client.guilds.cache.values()) {

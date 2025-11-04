@@ -1,15 +1,12 @@
-# Awesome's Utility
+# AwesomeBot99999
 
 ***__This README is still a work in progress.__***
 
 ## Prerequisites
-- [Node.js](https://nodejs.org/en)
-- discord.js `npm install discord.js`
-- dotenv `npm install dotenv`
-- sequelize/sqlite `npm install sqlite3 sequelize`
+- [Node.js version 22.12.0+](https://nodejs.org/en)
+- A Discord account
 
 ## Setting up the bot
-
 First, go to https://discord.com/developers/applications to create an application. Click on the "New Application" button. Enter a name and accept the Discord Developer TOS and Developer Policy. Then go to Bot and customize it however you want. Reset your token and copy it into a .env file. (I included an example env file so you can remove ".example" for your own) Turn off "Public Bot" if you don't want anyone else to invite your bot to servers. Turn on all Privileged Gateway Intents. 
 
 ## Inviting the bot

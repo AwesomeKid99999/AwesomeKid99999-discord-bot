@@ -21,7 +21,7 @@ module.exports = {
 				if (!interaction.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
 					 await interaction.reply({ content: ':x: You do not have permission to kick members.'});
 				}
-				 return interaction.reply(`The user you're trying to kick isn't in the server.`);
+				 return interaction.reply(`${target.user.tag} is not in the server, so you cannot kick them.`);
 				}
 			if (!interaction.member.permissions.has(PermissionsBitField.Flags.KickMembers)) {
 				return interaction.reply({ content: ':x: You do not have permission to kick members.',  });
@@ -48,7 +48,7 @@ module.exports = {
 
 			if (interaction.member === owner) {
 				if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
-					await interaction.reply({content: ":warning: I don't have permission to kick this member because my role is not high enough." });
+					await interaction.reply({content: `:warning: I don't have permission to kick ${target.user.tag} because my role is not high enough.` });
 
 				} else {
 					if (!target.user.bot) {
@@ -65,11 +65,11 @@ module.exports = {
 					await interaction.reply(`Successfully kicked **${target.user.tag}**\n**Reason:** ${value}`);
 				}
 			} else if (target.roles.highest.comparePositionTo(interaction.member.roles.highest) >= 0) {
-				  interaction.reply({content: ":warning: You don't have permission to kick this member because your role is not high enough." });
+				  interaction.reply({content: `:warning: You don't have permission to kick ${target.user.tag} because your role is not high enough.` });
 
 
 				} else if (target.roles.highest.comparePositionTo(highestRole) >= 0) {
-					await interaction.reply({content: ":warning: I don't have permission to kick this member because my role is not high enough." });
+					await interaction.reply({content: `:warning: I don't have permission to kick ${target.user.tag} because my role is not high enough.` });
 					
 				  } else {
 
