@@ -131,8 +131,8 @@ Some code was from the official discord.js guide.
 
 ## 📚 Documentation
 
-- **[Database Setup Guide](SETUPGUIDE.md)** - Complete guide for configuring the bot's features and the items needed to store in the database
-- **[Commands Guide](COMMANDS.md)** - Comprehensive list of all available commands
+- **[Database Setup Guide](docs/SETUPGUIDE.md)** - Complete guide for configuring the bot's features and the items needed to store in the database
+- **[Commands Guide](docs/COMMANDS.md)** - Comprehensive list of all available commands
 
 ---
 
