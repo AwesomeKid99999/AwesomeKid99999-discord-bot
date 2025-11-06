@@ -13,17 +13,50 @@ This guide provides detailed information about all available bot commands, organ
 
 Manage server applications and questions.
 
+### `/application apply <type>`
+Start your application process.
+- **Permission Required:** None
+- **Parameters:**
+  - `<type>` (required) - The type of application to submit (single word only)
+
+### `/application cancel <type>`
+Cancel your application.
+- **Permission Required:** None
+- **Parameters:**
+  - `<type>` (required) - The type of application to cancel (single word only)
+
+### `/application list`
+List all application types and their current status (open/closed).
+- **Permission Required:** None
+
 ### `/application channel [channel]`
 Set the channel where application responses will be sent.
 - **Permission Required:** Manage Channels
 - **Parameters:**
   - `[channel]` (optional) - The channel to set. Leave empty to remove.
 
-### `/application toggle <application type>`
+### `/application toggle <type> [open]`
 Open or close a specific type of application.
 - **Permission Required:** Manage Server
 - **Parameters:**
-  - `<application type>` (required) - The type of application to toggle
+  - `<type>` (required) - The type of application to toggle (single word only)
+  - `[open]` (optional) - Whether to open applications for this type (true/false)
+
+### `/application accept <user> <type> [reason]`
+Accept an application.
+- **Permission Required:** Manage Server OR Staff Role
+- **Parameters:**
+  - `<user>` (required) - The user whose application to accept
+  - `<type>` (required) - The type of application to accept (single word only)
+  - `[reason]` (optional) - Reason for accepting the application
+
+### `/application deny <user> <type> [reason]`
+Deny an application.
+- **Permission Required:** Manage Server OR Staff Role
+- **Parameters:**
+  - `<user>` (required) - The user whose application to deny
+  - `<type>` (required) - The type of application to deny (single word only)
+  - `[reason]` (optional) - Reason for denying the application
 
 ### `/question add <question number> <application type> [question text/embed/image]`
 Add a new question to an application type.
@@ -48,6 +81,12 @@ Modify an existing question in an application type.
   - `<question number>` (required) - The question number to change
   - `<application type>` (required) - The application type
   - At least one of: `[question text]`, `[embed]`, or `[image]` (required)
+
+### `/question list [type]`
+List all application questions for the server.
+- **Permission Required:** None
+- **Parameters:**
+  - `[type]` (optional) - Filter questions by type
 
 ---
 
@@ -117,6 +156,11 @@ Remove a channel from the XP ignore list.
 - **Permission Required:** Manage Server
 - **Parameters:**
   - `<channel>` (required) - Channel to stop ignoring
+- **Prerequisite:** Leveling must be enabled
+
+### `/xp ignored_channels list`
+View the channels in the XP ignore list.
+- **Permission Required:** Manage Server
 - **Prerequisite:** Leveling must be enabled
 
 ### `/xp reset user <user>`
@@ -303,18 +347,13 @@ Set the channel for leave announcements.
 - **Parameters:**
   - `[channel]` (optional) - The channel to set. Leave empty to remove.
 
-### `/leave message [message]`
-Set the leave message.
-- **Permission Required:** Manage Messages
-- **Parameters:**
-  - `[message]` (optional) - The message text (supports placeholders). Leave empty to remove.
-
-### `/leave embed [name]`
-Set the leave embed.
+### `/leave message [message] [embed]`
+Set the leave message and/or embed.
 - **Permission Required:** Manage Server
 - **Parameters:**
-  - `[name]` (optional) - The name of the embed to use. Leave empty to remove.
-- **Prerequisite:** Embed must exist and be active
+  - `[message]` (optional) - The message text (supports placeholders)
+  - `[embed]` (optional) - The name of the embed to use
+- **Note:** At least one parameter is required. Both can be used together.
 
 ### `/leave test`
 Test the leave message configuration.
@@ -623,6 +662,10 @@ View a list of available slash commands.
 
 ### `/repository`
 View the bot's GitHub repository.
+- **Permission Required:** None
+
+### `/setup`
+View the bot setup guide.
 - **Permission Required:** None
 
 ### `/website`
