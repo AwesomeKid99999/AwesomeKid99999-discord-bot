@@ -1049,6 +1049,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					description = description.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 
@@ -1058,6 +1067,15 @@ module.exports = {
 					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
+
+				// Add leveling placeholders
+				if (levelingData) {
+					footerText = footerText.replace('{level}', levelingData.level)
+						.replace('{current_xp}', levelingData.currentXp)
+						.replace('{total_xp}', levelingData.totalXp)
+						.replace('{next_level_xp}', levelingData.nextLevelXp)
+						.replace('{rank}', levelingData.rank);
+				}
 			}
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);

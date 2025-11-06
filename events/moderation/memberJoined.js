@@ -23,10 +23,8 @@ module.exports = {
                 .replace('{username}', member.user.username)
                 .replace('{tag}', member.user.tag)
                 .replace('{server}', member.guild.name)
-                .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true })) // Replacing placeholder with user avatar URL
-                .replace('{server_icon}', member.guild.iconURL({ dynamic: true })) // Replacing placeholder with server icon URL
-                .replace('{server_avatar}', member.guild.iconURL({ dynamic: true })); // Handling the server avatar placeholder
-
+                .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
+                .replace('{server_avatar}', member.guild.iconURL({ dynamic: true }));
             return await welcomeChannel.send(formattedMessage);
         }
 
@@ -115,8 +113,7 @@ module.exports = {
                 .replace('{tag}', member.user.tag)
                 .replace('{server}', member.guild.name)
                 .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
-                .replace('{server_icon}', member.guild.iconURL({ dynamic: true }))
-                .replace('{server_avatar}', member.guild.iconURL({ dynamic: true })) // Replacing the server avatar placeholder
+                .replace('{server_avatar}', member.guild.iconURL({ dynamic: true }))
                 .replace('{server_members}', member.guild.memberCount);
             const embed = new EmbedBuilder()
                 .setAuthor({

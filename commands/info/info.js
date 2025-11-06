@@ -22,7 +22,7 @@ module.exports = {
     async execute(interaction) {
 
         if (interaction.options.getSubcommand() === 'bot') {
-            return await interaction.reply(`I am a bot that was designed for **AwesomeKid99999's** Discord server! I can do *quite a few basic commands*, and that includes __showing your avatar, testing the latency, showing basic server information, showing basic user information, and providing a link to the bot owner's website__. However, I can't do **basic moderation actions __except__** for **bulk deleting messages** ||(only because **the bot owner is dumb** and **__doesn't know how to set up permissions on who can kick, ban, mute, and more using me__**)||. On the bright side, I can create **fake** moderation messages. In fact, I was created by AwesomeKid99999.\n\nUpdate 7/24/23: he figured out how to properly set up the kick and ban commands :open_mouth:\n12/27/24: Giveaways added!`);
+            return await interaction.reply(`View my full story here: [link]`);
         }
 
         if (interaction.options.getSubcommand() === 'server') {

@@ -17,7 +17,7 @@ module.exports = {
             .setDescription('Add, change, or remove the welcome message in the server. (STAFF ONLY)')
             .addStringOption(option => option
                 .setName('message')
-                .setDescription('The message to set. Use placeholders like {user}, {username}, {tag}, {server}, and \\n for new lines.')
+                .setDescription('The message to set. Use /placeholders for a list of available placeholders.')
                 .setMaxLength(1000))
             .addStringOption(option => option
                 .setName('embed')
@@ -113,9 +113,8 @@ module.exports = {
                     .replace('{username}', interaction.user.username)
                     .replace('{tag}', interaction.user.tag)
                     .replace('{server}', interaction.guild.name)
-                    .replace('{user_avatar}', interaction.user.displayAvatarURL({ dynamic: true })) // Replacing placeholder with user avatar URL
-                    .replace('{server_icon}', interaction.guild.iconURL({ dynamic: true })) // Replacing placeholder with server icon URL
-                    .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true })) // Handling the server avatar placeholder
+                    .replace('{user_avatar}', interaction.user.displayAvatarURL({ dynamic: true }))
+                    .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true }))
                     .replace('{server_members}', interaction.guild.memberCount);
 
                 if (!guild.welcomeChannelId) {
@@ -208,8 +207,7 @@ module.exports = {
                     .replace('{tag}', interaction.user.tag)
                     .replace('{server}', interaction.guild.name)
                     .replace('{user_avatar}', interaction.user.displayAvatarURL({ dynamic: true }))
-                    .replace('{server_icon}', interaction.guild.iconURL({ dynamic: true }))
-                    .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true })) // Replacing the server avatar placeholder
+                    .replace('{server_avatar}', interaction.guild.iconURL({ dynamic: true }))
                     .replace('{server_members}', interaction.guild.memberCount);
 
 

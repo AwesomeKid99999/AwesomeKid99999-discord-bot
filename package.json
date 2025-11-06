@@ -1,11 +1,13 @@
 {
   "name": "awesomekid99999-bot",
-  "version": "idk",
+  "version": "0.0",
   "description": "a bot for awesomekid99999's server",
   "main": "index.js",
   "scripts": {
     "test": "echo hello world",
-    "start": "node index.js"
+    "start": "node index.js",
+    "syncDatabase": "node syncdb.js",
+    "refreshCommands": "node deploy-commands.js"
   },
   "repository": {
     "type": "git",
