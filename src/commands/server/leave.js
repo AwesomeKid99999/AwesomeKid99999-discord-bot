@@ -18,13 +18,10 @@ module.exports = {
             .addStringOption(option => option
                 .setName('message')
                 .setDescription('The message to set. Use /placeholders for a list of available placeholders.')
-                .setMaxLength(1000)))
-        .addSubcommand(subcommand => subcommand
-            .setName('embed')
-            .setDescription('Add, change, or remove the leave embed in the server. (STAFF ONLY)')
+                .setMaxLength(1000))
             .addStringOption(option => option
-                .setName('name')
-                .setDescription('The name of the embed')
+                .setName('embed')
+                .setDescription('The name of the embed to show (leave empty to remove)')
                 .setMaxLength(100)))
         .addSubcommand(subcommand => subcommand
             .setName('test')
@@ -33,32 +30,16 @@ module.exports = {
     category: 'moderation',
     async execute(interaction) {
 
+        if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild))
+            return interaction.reply(':x: Sorry, you do not have permission to run this command.');
+
         if (interaction.options.getSubcommand() === 'channel') {
             const channel = interaction.options.getChannel('channel');
             const [guild] = await Guild.findOrCreate({where: {serverId: await interaction.guild.id}});
 
-
-
-
-            if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
-                return interaction.reply(':x: You do not have permission to manage channels.');
-
-            }
-
-            const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
-            if (!botMember.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
-                return interaction.reply(':warning: I do not have permission to manage channels.');
-
-            }
-
-
-
             if (!channel) {
                 await guild.update({ leaveChannelId: null });
                 return await interaction.reply('Leave channel has been set to **none**.');
-
-
-
             } else {
                 await guild.update({ leaveChannelId: channel.id });
                 return await interaction.reply(`Leave channel has been set to **${channel}**`);
@@ -67,68 +48,42 @@ module.exports = {
 
         if (interaction.options.getSubcommand() === 'message') {
 
-            const message = interaction.options.getString('message');
-            const [guild] = await Guild.findOrCreate({where: {serverId: await interaction.guild.id}});
+           const message = interaction.options.getString('message');
+           const embed = interaction.options.getString('embed');
 
+           const [guild] = await Guild.findOrCreate({where: {serverId: await interaction.guild.id}});
 
+           if (!message && !embed) {
+               await guild.update({ leaveMessage: null, leaveEmbedId: null });
+               return await interaction.reply('Removed the leave message and embed.');
+           } else if (message && !embed) {
+               // Replace \n with actual newlines
+               const formattedMessage = message.replace(/\\n/g, '\n');
 
+               await guild.update({ leaveMessage: formattedMessage });
+               return interaction.reply({ content: `Leave message has been set to:\n\`${formattedMessage}\`` });
 
-            if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-                return interaction.reply(':x: You do not have permission to manage messages.');
+           } else if (!message && embed) {
+               const existingEmbed = await Embed.findOne({ where: { serverId: interaction.guild.id, embedName: embed } });
+               if (!existingEmbed) {
+                   return interaction.reply({ content: `The embed **${embed}** does not exist.`, ephemeral: true });
+               }
+               await guild.update({ leaveEmbedId: existingEmbed.id });
+               return await interaction.reply(`Leave embed has been set to embed name: **${existingEmbed.embedName}**`);
 
-            }
+           } else {
+               // Replace \n with actual newlines
+               const formattedMessage = message.replace(/\\n/g, '\n');
+               await guild.update({ leaveMessage: formattedMessage });
 
-            const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
-            if (!botMember.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-                return interaction.reply(':warning: I do not have permission to manage messages.');
-
-            }
-
-
-            if (!message) {
-                await guild.update({ leaveMessage: null });
-                return await interaction.reply('Removed the leamve message.');
-
-
-
-            } else {
-                // Replace \n with actual newlines
-                const formattedMessage = message.replace(/\\n/g, '\n');
-
-                await guild.update({ leaveMessage: formattedMessage });
-                return interaction.reply({ content: `Leave message has been set to:\n\`${formattedMessage}\`` });
-
-            }
-        }
-
-        if (interaction.options.getSubcommand() === 'embed') {
-            const name = interaction.options.getString('name');
-            const [guild] = await Guild.findOrCreate({where: {serverId: await interaction.guild.id}});
-
-            if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
-                return interaction.reply(':x: You do not have permission to run this command.');
-
-            }
-
-
-
-            if (!name) {
-                await guild.update({ leaveEmbedId: null });
-                return await interaction.reply('Leave embed has been set to **none**.');
-
-
-
-            } else {
-
-                const existingEmbed = await Embed.findOne({ where: { serverId: interaction.guild.id, embedName: name } });
-                if (!existingEmbed) {
-                    return interaction.reply({ content: `The embed **${name}** does not exist.`, ephemeral: true });
-                }
-
-                await guild.update({ leaveEmbedId: existingEmbed.id });
-                return await interaction.reply(`Leave embed has been set to embed name: **${existingEmbed.embedName}**`);
-            }
-        }
+               const existingEmbed = await Embed.findOne({ where: { serverId: interaction.guild.id, embedName: embed } });
+               if (!existingEmbed) {
+                   return interaction.reply({ content: `The embed **${embed}** does not exist, but the leave message has been set to:\n\`${formattedMessage}\`.`, ephemeral: true });
+               }
+               await guild.update({ leaveEmbedId: existingEmbed.id });
+               return await interaction.reply(`Leave message has been set to:\n\`${formattedMessage}\`\n\nLeave embed has been set to embed name: **${existingEmbed.embedName}**`);
+           }
+       }
 
         if (interaction.options.getSubcommand() === 'test') {
             const guild = await Guild.findOne({ where: { serverId: await interaction.guild.id } });
