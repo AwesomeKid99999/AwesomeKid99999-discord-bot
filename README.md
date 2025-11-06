@@ -102,7 +102,6 @@ Invite this bot to your server [here](https://discord.com/oauth2/authorize?clien
 > 🧠 Note: The `syncDatabase` script uses `sequelize.sync({ alter: true })` to safely update your database schema without deleting data.
 6. Run the bot using `npm start`. (Runs: `node src/index.js`)
 
-### 4. Database 
 ---
 
 ## 💡 Contributions
@@ -132,7 +131,7 @@ Some code was from the official discord.js guide.
 
 ## 📚 Documentation
 
-- **[Setup Guide](SETUPGUIDE.md)** - Complete guide for configuring the bot's features
+- **[Database Setup Guide](SETUPGUIDE.md)** - Complete guide for configuring the bot's features and the items needed to store in the database
 - **[Commands Guide](COMMANDS.md)** - Comprehensive list of all available commands
 
 ---
