@@ -5,7 +5,7 @@ Modular, scalable, and open source — designed for community servers that need 
 
 Invite this bot to your server [here](https://discord.com/oauth2/authorize?client_id=872195259730386994).
 
-📚 **New to this bot?** Check out the [Setup Guide](SETUPGUIDE.md) and [Commands Guide](COMMANDS.md)!
+📚 **New to this bot?** Check out the [Setup Guide](/docs/SETUPGUIDE.md) and [Commands Guide](/docs/COMMANDS.md)!
 
 *Note: This bot is still in early development.*
 
