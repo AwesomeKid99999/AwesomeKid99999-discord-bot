@@ -78,15 +78,15 @@ Staff roles grant access to staff-only commands and features (like managing appl
 
 Embeds are reusable message cards that can be used in welcome/leave messages, level-up notifications, and more.
 
-1. Create an embed using `/embed create <name>` with desired fields
+1. Create an embed using `/embed create [name]` with desired fields
 2. Set the embed to active (use `[active] = true` when creating)
 3. Reference the embed by name in other features
 
 **Managing Embeds:**
-- Edit: `/embed edit <name>`
-- Delete: `/embed delete <name>`
+- Edit: `/embed edit [name]`
+- Delete: `/embed delete [name]`
 - View all: `/embed list`
-- Preview: `/embed show <name>`
+- Preview: `/embed show [name]`
 
 **Important:** Embeds must be set to active to be used in automated messages (welcome/leave/level-up).
 
@@ -127,10 +127,10 @@ Track message edits and deletions in a dedicated channel:
 No initial setup required. Use `/giveaway start` to create giveaways in any channel.
 
 **Managing Giveaways:**
-- Start: `/giveaway start <prize> <winners> [days] [hours] [minutes] [seconds] [milliseconds]`
+- Start: `/giveaway start <prize> <winners> [milliseconds] [seconds] [minutes] [hours] [days]`
   - Posts in the channel where the command is used
   - At least one duration parameter must be greater than 0
-- Edit: `/giveaway edit <message id>` - Change prize, winners, or duration
+- Edit: `/giveaway edit <message id> <prize> <winners> [duration options] [add_seconds]` - Change prize, winners, or duration
 - End early: `/giveaway end <message id>`
 - Reroll: `/giveaway reroll <message id>`
 
