@@ -5,6 +5,8 @@ Modular, scalable, and open source — designed for community servers that need 
 
 Invite this bot to your server [here](https://discord.com/oauth2/authorize?client_id=872195259730386994).
 
+📚 **New to this bot?** Check out the [Setup Guide](SETUPGUIDE.md) and [Commands Guide](COMMANDS.md)!
+
 *Note: This bot is still in early development.*
 
 ---
@@ -95,10 +97,10 @@ Invite this bot to your server [here](https://discord.com/oauth2/authorize?clien
    DATABASE_USER="root" # or your remote host's username
    DATABASE_PASSWORD="your-password-goes-here"
    ```
-4. Deploy commands using `npm run refreshCommands`. (Runs: `node deploy-commands.js`)
-5. Create/sync the database using `npm run syncDatabase` (Runs: `node syncdb.js`) 
+4. Deploy commands using `npm run refreshCommands`. (Runs: `node src/deploy-commands.js`)
+5. Create/sync the database using `npm run syncDatabase` (Runs: `node src/syncdb.js`) 
 > 🧠 Note: The `syncDatabase` script uses `sequelize.sync({ alter: true })` to safely update your database schema without deleting data.
-6. Run the bot using `npm start`. (Runs: `node index.js`)
+6. Run the bot using `npm start`. (Runs: `node src/index.js`)
 
 ### 4. Database 
 ---
@@ -126,4 +128,13 @@ Developed and maintained by AwesomeKid99999.
 Originally created in 2021 and continuously evolving to this day.
 Some code was from the official discord.js guide.
 
-Copyright (c) 2021-2025 AwesomeKid99999 (Andy Quach).
+---
+
+## 📚 Documentation
+
+- **[Setup Guide](SETUPGUIDE.md)** - Complete guide for configuring the bot's features
+- **[Commands Guide](COMMANDS.md)** - Comprehensive list of all available commands
+
+---
+
+Copyright (c) 2021-2025 AwesomeKid99999 (Andy Quach). Licensed under MIT.
