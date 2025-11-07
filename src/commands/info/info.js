@@ -22,7 +22,8 @@ module.exports = {
     async execute(interaction) {
 
         if (interaction.options.getSubcommand() === 'bot') {
-            return await interaction.reply(`View my full story here: [link]`);
+            const historyUrl = process.env.BOT_HISTORY_URL || `${process.env.GITHUB_REPOSITORY}/blob/main/docs/BOT_HISTORY.md`;
+            return await interaction.reply(`**My Story:** I've grown a lot since 2021! Read about my journey from a simple bad-word detector to a 110-command utility bot.\n\n📖 View my full history: ${historyUrl}`);
         }
 
         if (interaction.options.getSubcommand() === 'server') {
