@@ -22,8 +22,19 @@ module.exports = {
     async execute(interaction) {
 
         if (interaction.options.getSubcommand() === 'bot') {
-            const historyUrl = process.env.BOT_HISTORY_URL || `${process.env.GITHUB_REPOSITORY}/blob/main/docs/BOT_HISTORY.md`;
-            return await interaction.reply(`**My Story:** I've grown a lot since 2021! Read about my journey from a simple bad-word detector to a 110-command utility bot.\n\n📖 View my full history: ${historyUrl}`);
+            // Minimal, friendly output with version and a link to full history
+            const pkg = require('../../../package.json');
+            const versionTag = pkg?.version ? `${pkg.version}` : '';
+
+            // Build history URL from env or repository
+            let repoUrl = (pkg.repository && (pkg.repository.url || pkg.repository)) || process.env.GITHUB_REPOSITORY || '';
+            if (typeof repoUrl === 'object') repoUrl = repoUrl.url || '';
+            if (repoUrl.startsWith('git+')) repoUrl = repoUrl.slice(4);
+            if (repoUrl.endsWith('.git')) repoUrl = repoUrl.slice(0, -4);
+            const historyUrl = process.env.BOT_HISTORY_URL || (repoUrl ? `${repoUrl}/blob/main/docs/BOT_HISTORY.md` : '');
+
+            const message = `I'm a bot on **version ${versionTag}** that was originally built for **AwesomeKid99999's** Discord server. I've come a long way—read my full story here: ${historyUrl || 'https://github.com/AwesomeKid99999/AwesomeKid99999-discord-bot/blob/main/docs/BOT_HISTORY.md'}`;
+            return await interaction.reply(message);
         }
 
         if (interaction.options.getSubcommand() === 'server') {
