@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: awesomebot99999
+    restart: unless-stopped
+    env_file:
+      - .env
+    # Optionally map a volume for logs (uncomment if needed)
+    # volumes:
+    #   - ./logs:/app/logs
+    
+    # Uncomment below if using local Docker MySQL instead of remote database
+    # depends_on:
+    #   - db
+    # networks:
+    #   - bot-network
+
+  # Uncomment this entire service to use local Docker MySQL
+  # db:
+  #   image: mysql:8.0
+  #   container_name: awesomebot-mysql
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+  #     MYSQL_DATABASE: ${DATABASE_NAME}
+  #     MYSQL_USER: ${DATABASE_USER}
+  #     MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   networks:
+  #     - bot-network
+
+# Uncomment if using local Docker MySQL
+# networks:
+#   bot-network:
+#     driver: bridge
+
+# volumes:
+#   mysql-data:

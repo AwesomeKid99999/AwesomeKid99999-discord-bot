@@ -130,9 +130,11 @@ Format notes:
 
 - November 6, 2025 — Documentation and structure refinements: Created comprehensive `docs/COMMANDS.md` (now covering all 110 commands) and `docs/SETUPGUIDE.md` with consistent `<required>` / `[optional]` notation; updated `/info commands` and `/info setup` to link to these docs; standardized placeholder names in docs and code references; corrected documentation for `/leaderboard` and `/poll`; aligned `/leave` command structure to match `/welcome` (single `message [message] [embed]` subcommand); refined giveaway docs (required `<prize>` and `<winners>`, and duration parameter order) and updated setup guide accordingly; moved source under `src/` and updated paths in `package.json`; performed a full audit to ensure the docs perfectly match implemented commands. Bot is now invitable to other servers.
 
+- November 7, 2025 - version 1.0.0 release!
+
 ---
 
-### Command index snapshot (as of 2025-11-06)
+### Command index snapshot (as of 2025-11-07)
 
 This snapshot lists all currently implemented commands by category for quick reference. For full details and parameters, see `docs/COMMANDS.md`.
 

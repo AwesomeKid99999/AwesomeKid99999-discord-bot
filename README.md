@@ -7,6 +7,8 @@ Invite this bot to your server [here](https://discord.com/oauth2/authorize?clien
 
 📚 **New to this bot?** Check out the [Setup Guide](/docs/SETUPGUIDE.md) and [Commands Guide](/docs/COMMANDS.md)!
 
+🐳 **Deploying with Docker?** See the [Docker Deployment Guide](/docs/DOCKER.md) for container setup instructions!
+
 *Note: This bot is still in early development.*
 
 ---
@@ -131,8 +133,9 @@ Some code was from the official discord.js guide.
 
 ## 📚 Documentation
 
-- **[Database Setup Guide](docs/SETUPGUIDE.md)** - Complete guide for configuring the bot's features and the items needed to store in the database
+- **[Setup Guide](docs/SETUPGUIDE.md)** - Complete guide for configuring the bot's features and database setup
 - **[Commands Guide](docs/COMMANDS.md)** - Comprehensive list of all available commands
+- **[Docker Deployment Guide](docs/DOCKER.md)** - Deploy the bot using Docker (supports Synology DSM and all platforms)
 
 ---
 
