@@ -9,11 +9,22 @@ module.exports = {
 	async execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 
-		// Set the bot’s status and activity
-		client.user.setPresence({
-			activities: [{ name: 'Hello World!' }],
-			status: 'online', // can be 'online', 'idle', 'dnd', or 'invisible'
-		});
+
+		// Set the bot’s status and activity (include version number)
+		try {
+			const pkg = require('../../../package.json');
+			const version = pkg?.version ? ` • v${pkg.version}` : '';
+			client.user.setPresence({
+				activities: [{ name: `Hello World!${version}`, type: ActivityType.Playing }],
+				status: 'online', // can be 'online', 'idle', 'dnd', or 'invisible'
+			});
+		} catch (e) {
+			// Fallback if package.json cannot be read for any reason
+			client.user.setPresence({
+				activities: [{ name: 'Hello World!', type: ActivityType.Playing }],
+				status: 'online',
+			});
+		}
 
 		// Iterate through all guilds the bot is in
 		for (const guild of client.guilds.cache.values()) {

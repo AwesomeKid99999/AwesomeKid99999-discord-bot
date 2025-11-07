@@ -82,6 +82,8 @@ Format notes:
 
 - September 10, 2024 — Added `/convert_number` to convert numbers into different bases.
 
+- October 10, 2024 - Removed all music commands due to poor audio streaming and inconsistent use.
+
 - November 24, 2024 — Added `/robloxinfo` and `/generaterobux` commands.
 
 - December 27, 2024 — Added giveaways and a configurable welcome message (`/welcomemessage`) and a way to test welcome with `/welcometest`.
