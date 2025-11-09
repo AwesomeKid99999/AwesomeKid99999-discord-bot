@@ -27,7 +27,7 @@ module.exports = {
             .setName('test')
             .setDescription('Test the welcome message. (STAFF ONLY)')),
 
-    category: 'moderation',
+    category: 'server announcements',
     async execute(interaction) {
 
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild))

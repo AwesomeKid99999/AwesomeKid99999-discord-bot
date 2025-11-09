@@ -76,6 +76,7 @@ module.exports = {
                     .setDescription('Filter questions by type (optional)')
                     .setMaxLength(50)
                     .setRequired(false))),
+                    category: 'application',
     async execute(interaction) {
 
         const subCommand = interaction.options.getSubcommand();

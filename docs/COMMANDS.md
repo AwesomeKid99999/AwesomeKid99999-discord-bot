@@ -660,6 +660,14 @@ Display information about a user.
 View a list of available slash commands.
 - **Permission Required:** None
 
+### `/help [command] [ephemeral]`
+Show a quick help menu or details for a specific command.
+- **Permission Required:** None
+- **Parameters:**
+  - `[command]` (optional) - Get detailed help for a specific command (e.g., `application`)
+  - `[ephemeral]` (optional) - Whether only you can see the response (defaults to no)
+- **Note:** Use without arguments to see all commands grouped by category with resource links. Use with a command name to see detailed usage including subcommands and parameters.
+
 ### `/repository`
 View the bot's GitHub repository.
 - **Permission Required:** None

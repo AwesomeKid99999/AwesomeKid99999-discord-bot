@@ -11,6 +11,7 @@ module.exports = {
             .setName('user')
             .setDescription('The user to check the rank for (default is you).')
             .setRequired(false)),
+    category: 'leveling',
     async execute(interaction) {
         const user = interaction.options.getUser('user') || interaction.user; // Use the mentioned user or the command issuer
         const serverId = interaction.guild.id;

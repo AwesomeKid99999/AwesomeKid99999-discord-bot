@@ -4,7 +4,7 @@ const { Guild } = require('../../models');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('toggle_memes')
-		.setDescription('Enable or disable the memes (six-seven, 9+10=21, etc.) in this server')
+		.setDescription('Enable or disable the memes (six seven, 9+10=21, etc.) in this server. (STAFF ONLY)')
 		.setDMPermission(false)
 		.addBooleanOption(option => option
 			.setName('enabled')

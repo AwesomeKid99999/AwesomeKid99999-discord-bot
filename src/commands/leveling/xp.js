@@ -150,6 +150,7 @@ module.exports = {
                         option.setName('channel')
                             .setDescription('The channel to stop ignoring XP in')
                             .setRequired(true)))),
+        category: 'leveling',
     async execute(interaction) {
 
         const subCommand = interaction.options.getSubcommand();

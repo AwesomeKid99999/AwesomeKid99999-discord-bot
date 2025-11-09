@@ -132,34 +132,30 @@ Format notes:
 
 - November 7, 2025 - version 1.0.0 release!
 
+- November 8, 2025 — Version 1.0.1: Added `/help` command with optional `command:<name>` argument for quick command reference. General help shows all commands grouped by category with counts, resources (commands guide, invite link, support server), and uses backtick formatting for readability. Detailed help displays subcommands properly (e.g., `/application apply`, `/application list`) with parameter info. Plain text format instead of embeds for better mobile compatibility. Updated `.env.example` with `BOT_INVITE_URL` and `SUPPORT_SERVER_URL` variables. Fixed bugs in `/application apply` flow and the `/embed` command.
+
 ---
 
-### Command index snapshot (as of 2025-11-07)
+### Command index snapshot (as of 2025-11-08)
 
 This snapshot lists all currently implemented commands by category for quick reference. For full details and parameters, see `docs/COMMANDS.md`.
 
 • Application (11): `/application apply`, `/application cancel`, `/application list`, `/application channel`, `/application toggle`, `/application accept`, `/application deny`, `/question add`, `/question remove`, `/question change`, `/question list`
 
-• Leveling (12): `/xp settings change`, `/xp settings view`, `/xp add`, `/xp remove`, `/xp set`, `/xp ignored_channels add`, `/xp ignored_channels remove`, `/xp ignored_channels list`, `/xp reset user`, `/xp reset server`, `/rank`, `/leaderboard`
-
-• Roles (18): `/role add`, `/role remove`, `/role create`, `/role delete`, `/role mute`, `/role custom create`, `/role custom delete`, `/role custom add`, `/role custom remove`, `/role custom list`, `/role staff create`, `/role staff delete`, `/role staff add`, `/role staff remove`, `/role staff list`, `/role level create`, `/role level delete`, `/role level list`
-
-• Welcome/Leave (6): `/welcome channel`, `/welcome message`, `/welcome test`, `/leave channel`, `/leave message`, `/leave test`
-
-• Embeds (6): `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/embed generate`
-
-• Moderation (7): `/mute`, `/unmute`, `/ban`, `/unban`, `/kick`, `/purge`, `/messagelogchannel`
-
-• Giveaways (4): `/giveaway start`, `/giveaway edit`, `/giveaway end`, `/giveaway reroll`
-
-• Fun (10): `/beep`, `/hello`, `/button`, `/count`, `/count_to_three`, `/log`, `/message`, `/poll`, `/say`, `/toggle_memes`
-
 • Fake Moderation (4): `/fakemod ban`, `/fakemod kick`, `/fakemod mute`, `/fakemod warn`
 
-• Info (7): `/info bot`, `/info server`, `/info user`, `/commands`, `/repository`, `/setup`, `/website`
+• Fun (14): `/beep`, `/button`, `/count`, `/count_to_three`, `/giveaway start`, `/giveaway edit`, `/giveaway end`, `/giveaway reroll`, `/hello`, `/log`, `/message`, `/poll`, `/say`, `/toggle_memes`
 
-• Utility (4): `/avatar`, `/ping`, `/time`, `/placeholders`
+• Info (8): `/commands`, `/help`, `/info bot`, `/info server`, `/info user`, `/repository`, `/setup`, `/website`
 
-• Math (19): `/math operation add`, `/math operation subtract`, `/math operation multiply`, `/math operation divide`, `/math operation power`, `/math area rectangle`, `/math area square`, `/math area circle`, `/math area triangle1`, `/math area triangle2`, `/math righttriangle hypotenuse`, `/math righttriangle leg`, `/convert_number`, `/convert_temperature fahrenheit_to_celsius`, `/convert_temperature celsius_to_fahrenheit`, `/convert_temperature fahrenheit_to_kelvin`, `/convert_temperature kelvin_to_fahrenheit`, `/convert_temperature celsius_to_kelvin`, `/convert_temperature kelvin_to_celsius`
+• Leveling (12): `/leaderboard`, `/rank`, `/xp add`, `/xp remove`, `/xp set`, `/xp reset user`, `/xp reset server`, `/xp settings change`, `/xp settings view`, `/xp ignored_channels add`, `/xp ignored_channels remove`, `/xp ignored_channels list`
 
-• Roblox (2): `/robloxinfo`, `/generaterobux`
+• Math (19): `/convert_number`, `/convert_temperature fahrenheit_to_celsius`, `/convert_temperature celsius_to_fahrenheit`, `/convert_temperature fahrenheit_to_kelvin`, `/convert_temperature kelvin_to_fahrenheit`, `/convert_temperature celsius_to_kelvin`, `/convert_temperature kelvin_to_celsius`, `/math operation add`, `/math operation subtract`, `/math operation multiply`, `/math operation divide`, `/math operation power`, `/math area rectangle`, `/math area square`, `/math area circle`, `/math area triangle1`, `/math area triangle2`, `/math righttriangle hypotenuse`, `/math righttriangle leg`
+
+• Moderation (25): `/ban`, `/kick`, `/messagelogchannel`, `/mute`, `/purge`, `/unban`, `/unmute`, `/role add`, `/role remove`, `/role create`, `/role delete`, `/role mute`, `/role custom create`, `/role custom delete`, `/role custom list`, `/role custom add`, `/role custom remove`, `/role staff create`, `/role staff delete`, `/role staff list`, `/role staff add`, `/role staff remove`, `/role level create`, `/role level delete`, `/role level list`
+
+• Roblox (2): `/generaterobux`, `/robloxinfo`
+
+• Server Announcements (6): `/leave channel`, `/leave message`, `/leave test`, `/welcome channel`, `/welcome message`, `/welcome test`
+
+• Utility (10): `/avatar`, `/embed generate`, `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/ping`, `/placeholders`, `/time`

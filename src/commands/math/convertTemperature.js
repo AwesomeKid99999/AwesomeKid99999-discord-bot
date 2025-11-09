@@ -49,7 +49,7 @@ module.exports = {
                 .setName('degrees')
                 .setDescription('Degrees in Kelvin')
                 .setRequired(true))),
-
+    category: 'math',
 
     async execute(interaction) {
        const option = interaction.options.getSubcommand();

@@ -12,6 +12,7 @@ module.exports = {
 			.setMinValue(1)
 			.setMaxValue(1000)
 			.setRequired(true)), // Limit to 1000 messages to prevent overuse
+	category: 'moderation',
 	async execute(interaction) {
 		await interaction.deferReply({ ephemeral: true });
 

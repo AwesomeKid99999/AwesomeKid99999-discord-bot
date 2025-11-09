@@ -105,8 +105,8 @@ module.exports = {
                         .setMinValue(0))
                 .addIntegerOption(option =>
                     option.setName('add_seconds')
-                        .setDescription('Add/subtract seconds to current end time (use negative to shorten)'))
-        ),
+                        .setDescription('Add/subtract seconds to current end time (use negative to shorten)'))),
+        category: 'fun',
 
     async execute(interaction) {
 

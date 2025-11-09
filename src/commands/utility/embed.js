@@ -203,7 +203,7 @@ module.exports = {
 				if (!authorText.startsWith(`\\`)) {
 					authorText = authorText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -227,7 +227,7 @@ module.exports = {
 				if (title && !title.startsWith(`\\`)) {
 					title = title.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
@@ -245,7 +245,7 @@ module.exports = {
 			if (description && !description.startsWith(`\\`)) {
 				description = description.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -269,7 +269,7 @@ module.exports = {
 				if (footerText && !footerText.startsWith(`\\`)) {
 					footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
@@ -382,17 +382,15 @@ module.exports = {
 				}
 			} catch (error) {
 
-				console.log(error)
-				if (error.code === 'ColorConvert') {
-					return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/ColorResolvable). (the strings are case-sensitive)');
-				}
-
-				
-				if (error.code === 50035) {
-					return await interaction.reply('There was an error generating the embed.');
-				}
-
+			console.log(error)
+			if (error.code === 'ColorConvert') {
+				return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/main/typedef/ColorResolvable). (the strings are case-sensitive)');
 			}
+
+			
+			if (error.code === 50035) {
+				return await interaction.reply('There was an error generating the embed.');
+			}			}
 		}
 
 		if (interaction.options.getSubcommand() === 'create') {
@@ -477,7 +475,7 @@ module.exports = {
 				if (authorText && !authorText.startsWith(`\\`)) {
 					authorText = authorText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 						.replace('{username}', interaction.user.username) // Username of the user
-						.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+						.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 						.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
@@ -498,7 +496,7 @@ module.exports = {
 				if (title && !title.startsWith(`\\`)) {
 					title = title.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 						.replace('{username}', interaction.user.username) // Username of the user
-						.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+						.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 						.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
@@ -518,7 +516,7 @@ module.exports = {
 			if (description && !description.startsWith(`\\`)) {
 				description = description.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 			}
@@ -527,7 +525,7 @@ module.exports = {
 			if (footerText && !footerText.startsWith(`\\`)) {
 				footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 			}
@@ -613,24 +611,22 @@ module.exports = {
 					}
 
 
-					await interaction.reply(`Embed ${name} created!`);
-					return await interaction.channel.send({ embeds: [customEmbed] });
+				await interaction.reply(`Embed ${name} created!`);
+				return await interaction.channel.send({ embeds: [customEmbed] });
 
-			} catch (error) {
+		} catch (error) {
 
-				console.log(error)
-				if (error.code === 'ColorConvert') {
-					return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/ColorResolvable). (the strings are case-sensitive)');
-				}
-
-
-				if (error.code === 50035) {
-					return await interaction.reply('There was an error saving the embed.');
-				}
-
+			console.log(error)
+			if (error.code === 'ColorConvert') {
+				return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/main/typedef/ColorResolvable). (the strings are case-sensitive)');
 			}
 
-		}
+
+			if (error.code === 50035) {
+				return await interaction.reply('There was an error saving the embed.');
+			}
+
+		}		}
 
 		if (interaction.options.getSubcommand() === 'delete') {
 			const name = interaction.options.getString('name');
@@ -735,7 +731,7 @@ module.exports = {
 			if (authorText && !authorText.startsWith(`\\`)) {
 				authorText = authorText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -753,7 +749,7 @@ module.exports = {
 			if (title && !title.startsWith(`\\`)) {
 				title = title.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -771,7 +767,7 @@ module.exports = {
 			if (description && !description.startsWith(`\\`)) {
 				description = description.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -789,7 +785,7 @@ module.exports = {
 			if (footerText && !footerText.startsWith(`\\`)) {
 				footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -886,22 +882,20 @@ module.exports = {
 					return await interaction.channel.send({embeds: [customEmbed]});
 
 
-			} catch (error)
-				{
+		} catch (error)
+			{
 
-					console.log(error)
-					if (error.code === 'ColorConvert') {
-						return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/ColorResolvable). (the strings are case-sensitive)');
-					}
-
-
-					if (error.code === 50035) {
-						return await interaction.reply('There was an error saving the embed.');
-					}
-
+				console.log(error)
+				if (error.code === 'ColorConvert') {
+					return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/#/typedef/ColorResolvable). (the strings are case-sensitive)');
 				}
 
-			}
+
+				if (error.code === 50035) {
+					return await interaction.reply('There was an error saving the embed.');
+				}
+
+			}			}
 
 		if (interaction.options.getSubcommand() === 'list') {
 			const serverId = interaction.guild.id;
@@ -1005,7 +999,7 @@ module.exports = {
 			if (authorText && !authorText.startsWith(`\\`)) {
 				authorText = authorText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -1026,7 +1020,7 @@ module.exports = {
 			if (title && !title.startsWith(`\\`)) {
 				title = title.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -1046,7 +1040,7 @@ module.exports = {
 			if (description && !description.startsWith(`\\`)) {
 				description = description.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -1064,7 +1058,7 @@ module.exports = {
 			if (footerText && !footerText.startsWith(`\\`)) {
 				footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Full tag of the user (e.g., "User#1234")
+					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
 
@@ -1155,30 +1149,28 @@ module.exports = {
 					}
 
 
-					await interaction.reply(`Showing embed ${name}!`);
+				await interaction.reply(`Showing embed ${name}!`);
 
 
-					return await interaction.channel.send({ embeds: [customEmbed] });
+				return await interaction.channel.send({ embeds: [customEmbed] });
 
-			} catch (error) {
+		} catch (error) {
 
-				console.log(error)
-				if (error.code === 'ColorConvert') {
-					return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/ColorResolvable). (the strings are case-sensitive)');
-				}
+			console.log(error)
+			if (error.code === 'ColorConvert') {
+				return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/main/typedef/ColorResolvable). (the strings are case-sensitive)');
+			}
 
 
-				if (error.code === 50035) {
-					return await interaction.reply('There was an error saving the embed.');
-				}
-
+			if (error.code === 50035) {
+				return await interaction.reply('There was an error saving the embed.');
 			}
 
 		}
-	},
+
+	}
+},
 };
-
-
 async function isValidImageUrl(url) {
 	const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"];
 	try {

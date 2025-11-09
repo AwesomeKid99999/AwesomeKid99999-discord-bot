@@ -4,7 +4,7 @@ services:
   bot:
     build: .
     container_name: awesomebot99999    
-    image: awesomebot99999-v1.0.0 # change this every time the code is updated (for DSM Container Manager)
+    image: awesomebot99999-v1.0.1 # change this every time the code is updated (for DSM Container Manager)
     restart: unless-stopped
     env_file:
       - .env

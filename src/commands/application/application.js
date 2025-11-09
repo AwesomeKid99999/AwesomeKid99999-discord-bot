@@ -78,6 +78,7 @@ module.exports = {
                 .setDescription('Reason for denying the application.')
                 .setRequired(false)
                 .setMaxLength(1000))),
+                category: 'application',
     async execute(interaction) {
 
         const subCommand = interaction.options.getSubcommand();
@@ -419,12 +420,12 @@ module.exports = {
                 } catch (error) {
                     console.error('Error while saving application:', error);
                     interaction.client.off('messageUpdate', onMessageUpdate);
-                    return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/apply\` again.`);
+                    return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/application apply\` again.`);
                 }
             } catch (error) {
                 console.error(error);
                 try { interaction.client.off('messageUpdate', onMessageUpdate); } catch {}
-                return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/apply\` again.`);
+                return await applicationChannel.send(`${user}, the application process either timed out or an error has occurred. Please restart by using \`/application apply\` again.`);
             }
         }
 
@@ -529,7 +530,7 @@ module.exports = {
 
                 if (applicationToggles.length === 0) {
                     return await interaction.reply({
-                        content: 'No application types have been configured yet. Use `/applicationtoggle` to set up application types.',
+                        content: 'No application types have been configured yet. Please contact staff for more information.',
                         ephemeral: true,
                     });
                 }

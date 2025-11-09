@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { Level, XPSettings } = require('../../models/');
+const { category } = require('../info/commands');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +22,7 @@ module.exports = {
             .setRequired(false)
             .setMinValue(1)
             .setMaxValue(100)),
-
+    category: 'leveling',
     async execute(interaction) {
         const serverId = interaction.guild.id;
         const limit = interaction.options.getInteger('limit') ?? 10;

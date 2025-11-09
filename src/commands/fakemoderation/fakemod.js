@@ -66,7 +66,7 @@ module.exports = {
                 .setDescription('The reason for warning the user')
                 .setRequired(true))),
 
-    category: 'fakemoderation',
+    category: 'fake moderation',
     async execute(interaction) {
 
 

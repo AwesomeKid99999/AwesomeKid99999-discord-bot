@@ -6,6 +6,7 @@ module.exports = {
 		.setName('repository')
 		.setDMPermission(false)
 		.setDescription("View my source code!"),
+	category: 'info',
 	async execute(interaction) {
 		await interaction.reply(`**GitHub Repository:** ${process.env.GITHUB_REPOSITORY}`);
 	},

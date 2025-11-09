@@ -16,7 +16,7 @@ module.exports = {
         .addBooleanOption(option => option
             .setName("embed")
             .setDescription('Whether the poll should be an embed')),
-
+        category: 'fun',
     async execute(interaction) {
 
         const isEmbed = interaction.options.getBoolean('embed');
