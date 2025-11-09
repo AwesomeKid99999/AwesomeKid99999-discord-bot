@@ -134,6 +134,8 @@ Format notes:
 
 - November 8, 2025 — Version 1.0.1: Added `/help` command with optional `command:<name>` argument for quick command reference. General help shows all commands grouped by category with counts, resources (commands guide, invite link, support server), and uses backtick formatting for readability. Detailed help displays subcommands properly (e.g., `/application apply`, `/application list`) with parameter info. Plain text format instead of embeds for better mobile compatibility. Updated `.env.example` with `BOT_INVITE_URL` and `SUPPORT_SERVER_URL` variables. Fixed bugs in `/application apply` flow and the `/embed` command.
 
+- November 8, 2025 - Version 1.0.2: Added uptime and server count to `/info bot` and status, added `/help` in status, and moved changelog to root.
+
 ---
 
 ### Command index snapshot (as of 2025-11-08)

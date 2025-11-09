@@ -33,7 +33,27 @@ module.exports = {
             if (repoUrl.endsWith('.git')) repoUrl = repoUrl.slice(0, -4);
             const historyUrl = process.env.BOT_HISTORY_URL || (repoUrl ? `${repoUrl}/blob/main/docs/BOT_HISTORY.md` : '');
 
-            const message = `I'm a bot on **version ${versionTag}** that was originally built for **AwesomeKid99999's** Discord server. I've come a long way—read my full story here: ${historyUrl || 'https://github.com/AwesomeKid99999/AwesomeKid99999-discord-bot/blob/main/docs/BOT_HISTORY.md'}`;
+            // Total server (guild) count
+            const guildCount = interaction.client?.guilds?.cache?.size ?? 0;
+
+            // Calculate uptime and ready timestamp
+            const uptimeMs = interaction.client?.uptime ?? 0;
+            const readyTimestamp = Math.floor((Date.now() - uptimeMs) / 1000);
+            
+            const totalSeconds = Math.floor(uptimeMs / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            const uptimeParts = [];
+            if (days > 0) uptimeParts.push(`${days} day${days === 1 ? '' : 's'}`);
+            if (hours > 0) uptimeParts.push(`${hours} hour${hours === 1 ? '' : 's'}`);
+            if (minutes > 0) uptimeParts.push(`${minutes} minute${minutes === 1 ? '' : 's'}`);
+            if (seconds > 0 || uptimeParts.length === 0) uptimeParts.push(`${seconds} second${seconds === 1 ? '' : 's'}`);
+            const uptimeFormatted = uptimeParts.join(', ');
+
+            const message = `I'm a bot on **version ${versionTag}** that was originally built for **AwesomeKid99999's** Discord server. I'm currently in **${guildCount}** server${guildCount === 1 ? '' : 's'}.\n**My current uptime (as of when this command was run) is:** ${uptimeFormatted}\n**I was online since:** <t:${readyTimestamp}:F> (<t:${readyTimestamp}:R>)\n\nI've come a long way—read my full story here: ${historyUrl || 'https://github.com/AwesomeKid99999/AwesomeKid99999-discord-bot/blob/main/docs/BOT_HISTORY.md'}`;
             return await interaction.reply(message);
         }
 
