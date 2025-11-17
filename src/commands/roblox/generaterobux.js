@@ -1,6 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
-const fetch = require('node-fetch'); // Ensure this package is installed.
 
 module.exports = {
     data: new SlashCommandBuilder()

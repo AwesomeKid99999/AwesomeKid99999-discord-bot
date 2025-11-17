@@ -11,7 +11,7 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
 
     const xpBase = xpSettings.baseXp; // Base XP required for level 1
     const xpIncrement = xpSettings.xpIncrement; // Additional XP required per level
-    const levelUpMessage = xpSettings.levelUpMessage ?? `{user}, you have reached **level {level}**. GG!`;
+    let levelUpMessage = xpSettings.levelUpMessage;
     const startingLevel = xpSettings.startingLevel;
 
     // Find or create the user's XP record
@@ -318,6 +318,26 @@ async function addXP(client, userId, serverId, xpToAdd, channel, isCommand) {
             if (levelUpEmbed.timestamp) embed.setTimestamp();
 
             return targetChannel.send({ content: formattedMessage, embeds: [embed] });
+        }
+
+        // Fallback to default message if none set
+        if (!levelUpMessage && !levelUpEmbedId) {
+            levelUpMessage = `{user}, you have reached **level {level}**. GG!`
+            const formattedMessage = levelUpMessage
+                .replace('{user}', `<@${userId}>`)
+                .replace('{username}', member.user.username)
+                .replace('{tag}', member.user.tag)
+                .replace('{server}', member.guild.name)
+                .replace('{server_members}', member.guild.memberCount)
+                .replace('{level}', userXP.level)
+                .replace('{current_xp}', userXP.currentXp)
+                .replace('{total_xp}', userXP.totalXp)
+                .replace('{next_level_xp}', xpBase + (xpIncrement * (userXP.level - startingLevel)))
+                .replace('{rank}', (() => { try { return (Level.findAll({ where: { serverId: serverId }, order: [['totalXp', 'DESC']] })).then(allUsers => allUsers.findIndex(user => user.userId === userId) + 1); } catch { return ''; } })())
+                .replace('{user_avatar}', member.user.displayAvatarURL({ dynamic: true }))
+                .replace('{server_avatar}', member.guild.iconURL({ dynamic: true }));
+
+            return targetChannel.send(formattedMessage);
         }
     }
 

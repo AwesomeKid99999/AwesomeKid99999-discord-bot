@@ -302,63 +302,63 @@ module.exports = {
 				.setColor(color)
 				.setTitle(title)
 				.setDescription(description)
-			if (authorImage === "{user_avatar}") {
-				customEmbed.setAuthor({
-					name: authorText || interaction.user.username,
-					iconURL: interaction.user.displayAvatarURL({dynamic: true}),
-				});
-			} else if (authorImage === "{server_avatar}") {
-				customEmbed.setAuthor({
-					name: authorText || interaction.guild.name,
-					iconURL: interaction.guild.iconURL({dynamic: true}),
-				});
-			} else {
-				customEmbed.setAuthor({
-					name: authorText || null,
-					iconURL: authorImage || null,
-				})
-			}
+				if (authorImage === "{user_avatar}") {
+					customEmbed.setAuthor({
+						name: authorText || interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({dynamic: true}),
+					});
+				} else if (authorImage === "{server_avatar}") {
+					customEmbed.setAuthor({
+						name: authorText || interaction.guild.name,
+						iconURL: interaction.guild.iconURL({dynamic: true}),
+					});
+				} else {
+					customEmbed.setAuthor({
+						name: authorText || null,
+						iconURL: authorImage || null,
+					})
+				}
 
 
-			if (thumbnail === "{user_avatar}") {
-				customEmbed.setThumbnail(interaction.user.displayAvatarURL({dynamic: true}));
-			} else if (thumbnail === "{server_avatar}") {
-				customEmbed.setThumbnail(interaction.guild.iconURL({dynamic: true}));
-			} else {
-				customEmbed.setThumbnail(thumbnail)
-			}
-			if (image === "{user_avatar}") {
-				customEmbed.setImage(interaction.user.displayAvatarURL({dynamic: true}));
-			} else if (image === "{server_avatar}") {
-				customEmbed.setImage(interaction.guild.iconURL({dynamic: true}));
-			} else {
-				customEmbed.setImage(image)
-			}
+				if (thumbnail === "{user_avatar}") {
+					customEmbed.setThumbnail(interaction.user.displayAvatarURL({dynamic: true}));
+				} else if (thumbnail === "{server_avatar}") {
+					customEmbed.setThumbnail(interaction.guild.iconURL({dynamic: true}));
+				} else {
+					customEmbed.setThumbnail(thumbnail)
+				}
+				if (image === "{user_avatar}") {
+					customEmbed.setImage(interaction.user.displayAvatarURL({dynamic: true}));
+				} else if (image === "{server_avatar}") {
+					customEmbed.setImage(interaction.guild.iconURL({dynamic: true}));
+				} else {
+					customEmbed.setImage(image)
+				}
 
-			if (footerImage === "{user_avatar}") {
-				// Replace the placeholder with the actual user avatar URL
-				customEmbed.setFooter({
-					text: footerText || '', // If footerText is provided, use it; otherwise, use an empty string
-					iconURL: interaction.user.displayAvatarURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
-				});
-			} else if (footerImage === "{server_avatar}") {
-				// Replace the placeholder with the actual user avatar URL
-				customEmbed.setFooter({
-					text: footerText, // If footerText is provided, use it; otherwise, use an empty string
-					iconURL: interaction.guild.iconURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
-				});
-			} else if (footerImage && isValidImageUrl(footerImage)) {
-				// If the footerImage is a valid image URL, set it as the icon
-				customEmbed.setFooter({
-					text: footerText,
-					iconURL: footerImage
-				});
-			} else {
-				// If no valid footerImage, just set the footer text
-				customEmbed.setFooter({
-					text: footerText
-				});
-			}
+				if (footerImage === "{user_avatar}") {
+					// Replace the placeholder with the actual user avatar URL
+					customEmbed.setFooter({
+						text: footerText || '', // If footerText is provided, use it; otherwise, use an empty string
+						iconURL: interaction.user.displayAvatarURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
+					});
+				} else if (footerImage === "{server_avatar}") {
+					// Replace the placeholder with the actual user avatar URL
+					customEmbed.setFooter({
+						text: footerText, // If footerText is provided, use it; otherwise, use an empty string
+						iconURL: interaction.guild.iconURL({dynamic: true}) // This will use the user's avatar URL, dynamic for GIF support
+					});
+				} else if (footerImage && isValidImageUrl(footerImage)) {
+					// If the footerImage is a valid image URL, set it as the icon
+					customEmbed.setFooter({
+						text: footerText,
+						iconURL: footerImage
+					});
+				} else {
+					// If no valid footerImage, just set the footer text
+					customEmbed.setFooter({
+						text: footerText
+					});
+				}
 				if (timestamp) customEmbed.setTimestamp();
 					
 
