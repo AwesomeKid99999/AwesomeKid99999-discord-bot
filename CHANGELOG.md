@@ -136,6 +136,10 @@ Format notes:
 
 - November 8, 2025 - Version 1.0.2: Added uptime and server count to `/info bot` and status, added `/help` in status, and moved changelog to root.
 
+- November 17, 2025 - Version 1.0.3: Bug fixes in leveling stuff (changing level up message and only embed level up message) and removed node-fetch requirement for generate robux command
+
+- November 20, 2025 - Version 1.0.4: fixed /count command to send files correctly when going over character limit
+
 ---
 
 ### Command index snapshot (as of 2025-11-08)
