@@ -51,6 +51,7 @@ Invite this bot to your server [here](https://discord.com/oauth2/authorize?clien
 - **Calendar (Global & Local)** — Organize upcoming events.
 - **Global Announcements** — Developer messages broadcast to all servers.
 - **Weather** — Check local forecasts anywhere in the world.
+- **Toggle Commands/Modules** — Enable or disable certain commands and modules in your server.
 ---
 
 ## Prerequisites
