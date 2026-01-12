@@ -704,6 +704,34 @@ Get the current time (matches your timezone).
 View all available placeholders for messages and embeds.
 - **Permission Required:** None
 
+
+### `/toggle command <command> [state]`
+Toggle a specific command on or off for the server.
+- **Permission Required:** Manage Server
+- **Parameters:**
+  - `<command>` (required) - The command to toggle
+  - `[state]` (optional) - true to enable, false to disable (omit to set to false)
+- **Note:** Excluded commands (toggle, toggle_memes, commands, help, info, repository, setup, website, avatar, ping, time, placeholders) cannot be toggled
+
+### `/toggle module <module> [state]`
+Toggle an entire module on or off for the server.
+- **Permission Required:** Manage Server
+- **Parameters:**
+  - `<module>` (required) - The module to toggle (application, leveling)
+  - `[state]` (optional) - true to enable, false to disable (omit to set to false)
+
+### `/toggle list`
+Show all commands and their toggle status for the server.
+- **Permission Required:** Manage Server
+
+### `/toggle enable-all`
+Enable all commands for the server.
+- **Permission Required:** Manage Server
+
+### `/toggle disable-all`
+Disable all commands for the server.
+- **Permission Required:** Manage Server
+
 ---
 
 ## 🧮 Math Commands

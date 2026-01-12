@@ -138,11 +138,17 @@ Format notes:
 
 - November 17, 2025 - Version 1.0.3: Bug fixes in leveling stuff (changing level up message and only embed level up message) and removed node-fetch requirement for generate robux command
 
-- November 20, 2025 - Version 1.0.4: fixed /count command to send files correctly when going over character limit
+- November 20, 2025 - Version 1.0.4: fixed `/count` command to send files correctly when going over character limit
+
+## 2026
+
+### January 11, 2026: New Versioning System! Version YYYY.MM.DD.(Revision Number if necessary) (example: version 2026.1.11.1)
+
+- Version 2026.1.11 - Added `/toggle` to toggle (non-info and non-utility) commands and modules in the server. Requires Manage Server permission. All commands enabled by default. Useful for disabling certain commands.
 
 ---
 
-### Command index snapshot (as of 2025-11-08)
+### Command index snapshot (as of 2026-1-11)
 
 This snapshot lists all currently implemented commands by category for quick reference. For full details and parameters, see `docs/COMMANDS.md`.
 
@@ -164,4 +170,4 @@ This snapshot lists all currently implemented commands by category for quick ref
 
 • Server Announcements (6): `/leave channel`, `/leave message`, `/leave test`, `/welcome channel`, `/welcome message`, `/welcome test`
 
-• Utility (10): `/avatar`, `/embed generate`, `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/ping`, `/placeholders`, `/time`
+• Utility (15): `/avatar`, `/embed generate`, `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/ping`, `/placeholders`, `/time`, `/toggle command`, `/toggle module`, `/toggle list`, `/toggle enable-all`, `/toggle disable-all`

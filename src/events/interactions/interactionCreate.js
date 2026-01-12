@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const buttonHandler = require('../../handlers/buttonHandler')
 const {acceptApplication, denyApplication} = require("../../helpers/applicationActions");
+const { CommandToggle } = require('../../models');
 
 
 module.exports = {
@@ -14,6 +15,21 @@ module.exports = {
 				return;
 			}
 
+			// Check if command is disabled for this server
+			const toggle = await CommandToggle.findOne({
+				where: {
+					serverId: interaction.guild.id,
+					commandName: interaction.commandName
+				}
+			});
+
+			if (toggle && !toggle.enabled) {
+				return await interaction.reply({
+					content: `❌ The \`${interaction.commandName}\` command is currently disabled on this server.`,
+					ephemeral: true
+				});
+			}
+
 			try {
 				await command.execute(interaction);
 				console.log(`${interaction.user.tag} at ${interaction.guild.name} triggered an interaction named ${interaction.commandName}.`)
@@ -21,6 +37,20 @@ module.exports = {
 				console.error(`Error executing ${interaction.commandName}`);
 				console.log(`${interaction.user.tag} at ${interaction.guild.name} tried executing ${interaction.commandName}, but there was an error.`)
 
+				console.error(error);
+			}
+		} else if (interaction.isAutocomplete()) {
+			const command = interaction.client.commands.get(interaction.commandName);
+
+			if (!command) {
+				console.error(`No command matching ${interaction.commandName} was found.`);
+				return;
+			}
+
+			try {
+				await command.autocomplete(interaction);
+			} catch (error) {
+				console.error(`Error executing autocomplete for ${interaction.commandName}`);
 				console.error(error);
 			}
 		} else if (interaction.isButton()) {

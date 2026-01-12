@@ -15,6 +15,7 @@ const LevelRoles = require('./levelRoles')(sequelize, Sequelize);
 const XPSettings = require('./xpSettings')(sequelize, Sequelize);
 const XPIgnoredChannels = require('./xpIgnoredChannels')(sequelize, Sequelize);
 const Birthday = require('./birthday')(sequelize, Sequelize);
+const CommandToggle = require('./commandToggle')(sequelize, Sequelize);
 
 // Export centralized library of models
 module.exports = {
@@ -32,5 +33,6 @@ module.exports = {
     LevelRoles,
     XPSettings,
     XPIgnoredChannels,
-    Birthday
+    Birthday,
+    CommandToggle
 };
