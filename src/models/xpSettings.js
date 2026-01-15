@@ -32,12 +32,12 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
         },
         baseXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 100, // Default base XP
         },
         xpIncrement: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 100, // Default increment for each level
         },
@@ -47,11 +47,11 @@ module.exports = (sequelize, Sequelize) => {
             defaultValue: 1,
         },
         levelUpMessage: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(1000),
             allowNull: true,
         },
         levelUpChannelId: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(20),
             allowNull: true,
         },
         levelUpEmbedId: {
@@ -59,7 +59,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
         },
         rankMessage: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(1000),
             allowNull: true,
         },
         rankEmbedId: {
