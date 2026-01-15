@@ -19,11 +19,11 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false
         },
         winnerCount: {
-            type: Sequelize.INTEGER.UNSIGNED,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false
         },
         endsAt: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false
         },
         active: {

@@ -32,17 +32,17 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
         },
         baseXp: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 100, // Default base XP
         },
         xpIncrement: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 100, // Default increment for each level
         },
         startingLevel: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT,
             allowNull: false,
             defaultValue: 1,
         },
@@ -55,7 +55,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
         },
         levelUpEmbedId: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: true,
         },
         rankMessage: {
@@ -63,7 +63,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
         },
         rankEmbedId: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: true,
         },
 

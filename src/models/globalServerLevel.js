@@ -8,27 +8,27 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
         },
         standardizedXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
         },
         rawXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
         },
         dailyXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
         },
         weeklyXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
         },
         monthlyXp: {
-            type: Sequelize.BIGINT,
+            type: Sequelize.BIGINT.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
         },

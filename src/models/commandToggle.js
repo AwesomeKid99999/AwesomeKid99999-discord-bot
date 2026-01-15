@@ -2,7 +2,7 @@
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define('commandToggle', {
         id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true
         },
