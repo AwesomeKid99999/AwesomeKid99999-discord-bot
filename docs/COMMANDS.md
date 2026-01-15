@@ -720,6 +720,20 @@ Toggle an entire module on or off for the server.
   - `<module>` (required) - The module to toggle (application, leveling)
   - `[state]` (optional) - true to enable, false to disable (omit to set to false)
 
+### `/toggle command-group <command> [state]`
+Toggle all subcommands of a top-level command on or off.
+- **Permission Required:** Manage Server
+- **Parameters:**
+  - `<command>` (required) - The top-level command (e.g., `embed`)
+  - `[state]` (optional) - true to enable, false to disable (omit to set to false)
+
+### `/toggle subcommand-group <group> [state]`
+Toggle all subcommands within a subcommand group on or off.
+- **Permission Required:** Manage Server
+- **Parameters:**
+  - `<group>` (required) - The subcommand group key (e.g., `role level`)
+  - `[state]` (optional) - true to enable, false to disable (omit to set to false)
+
 ### `/toggle list`
 Show all commands and their toggle status for the server.
 - **Permission Required:** Manage Server

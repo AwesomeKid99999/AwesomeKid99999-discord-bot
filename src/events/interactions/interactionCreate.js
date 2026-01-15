@@ -15,17 +15,34 @@ module.exports = {
 				return;
 			}
 
-			// Check if command is disabled for this server
-			const toggle = await CommandToggle.findOne({
-				where: {
-					serverId: interaction.guild.id,
-					commandName: interaction.commandName
-				}
-			});
+			// Build possible invoked command names (support subcommands and groups)
+			const invokedNames = [];
+			try {
+				const group = interaction.options.getSubcommandGroup(false);
+				const sub = interaction.options.getSubcommand(false);
+				if (group && sub) invokedNames.push(`${interaction.commandName} ${group} ${sub}`);
+				if (sub) invokedNames.push(`${interaction.commandName} ${sub}`);
+			} catch (e) {
+				// no subcommands
+			}
+			// Only include base command when there is no subcommand.
+			if (invokedNames.length === 0) invokedNames.push(interaction.commandName);
+
+			// Check toggles in order (most specific -> least specific)
+			let toggle = null;
+			for (const name of invokedNames) {
+				toggle = await CommandToggle.findOne({
+					where: {
+						serverId: interaction.guild.id,
+						commandName: String(name).toLowerCase()
+					}
+				});
+				if (toggle) break;
+			}
 
 			if (toggle && !toggle.enabled) {
 				return await interaction.reply({
-					content: `❌ The \`${interaction.commandName}\` command is currently disabled on this server.`,
+					content: `❌ The \`${invokedNames[0]}\` command is currently disabled on this server.`,
 					ephemeral: true
 				});
 			}

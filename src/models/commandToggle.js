@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
             unique: 'unique_toggle'
         },
         commandName: {
-            type: Sequelize.STRING(32),
+            type: Sequelize.STRING(98),
             allowNull: false,
             unique: 'unique_toggle'
         },

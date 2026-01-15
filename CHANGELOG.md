@@ -146,9 +146,11 @@ Format notes:
 
 - Version 2026.1.11 - Added `/toggle` to toggle (non-info and non-utility) commands and modules in the server. Requires Manage Server permission. All commands enabled by default. Useful for disabling certain commands.
 
+- Version 2026.1.15 - Added support for subcommands and subcommand groups inside `/toggle` command to enable/disable individual commands. Bug fix for validating image link (when user does not input a link but other text instead) 
+
 ---
 
-### Command index snapshot (as of 2026-1-11)
+### Command index snapshot (as of 2026-1-15)
 
 This snapshot lists all currently implemented commands by category for quick reference. For full details and parameters, see `docs/COMMANDS.md`.
 
@@ -170,4 +172,4 @@ This snapshot lists all currently implemented commands by category for quick ref
 
 • Server Announcements (6): `/leave channel`, `/leave message`, `/leave test`, `/welcome channel`, `/welcome message`, `/welcome test`
 
-• Utility (15): `/avatar`, `/embed generate`, `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/ping`, `/placeholders`, `/time`, `/toggle command`, `/toggle module`, `/toggle list`, `/toggle enable-all`, `/toggle disable-all`
+• Utility (17): `/avatar`, `/embed generate`, `/embed create`, `/embed edit`, `/embed delete`, `/embed list`, `/embed show`, `/ping`, `/placeholders`, `/time`, `/toggle command`, `/toggle module`, `/toggle list`, `/toggle enable-all`, `/toggle disable-all`, `/toggle command-group`, `/toggle subcommand-group`

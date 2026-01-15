@@ -199,13 +199,38 @@ module.exports = {
 
 
 
-			if (authorText) {
-				if (!authorText.startsWith(`\\`)) {
+			if (authorImage === ("{user_avatar}" || "{server_avatar}")) {
+				// Placeholder detected, no need to validate
+			} else if (!isValidImageUrl(authorImage)) {
+				authorImage = null; // Clear invalid URLs
+			}
+
+			if ((authorImage && !authorText) || (authorText && !isValidImageUrl(authorImage))) {
+				authorImage = null;
+			}
+
+
+			if (image === ("{user_avatar}" || "{server_avatar}")) {
+			} else if (!isValidImageUrl(image)) image = null;
+
+
+			if (thumbnail === ("{user_avatar}" || "{server_avatar}")) {
+			} else if (!isValidImageUrl(thumbnail)) thumbnail = null;
+
+			if (((footerImage) && !footerText) || (footerText && !isValidImageUrl(footerImage))) {
+				footerImage = null;
+			}
+
+
+			if (!authorText && !authorImage && !title && !description && !thumbnail && !image && !footerText && !footerImage) description = '<:spacer:1329265736555827242>';
+
+
+				if (authorText && !authorText.startsWith(`\\`)) {
 					authorText = authorText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
-					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
-					.replace('{server}', interaction.guild.name)
-					.replace('{server_members}', interaction.guild.memberCount);
+						.replace('{username}', interaction.user.username) // Username of the user
+						.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
+						.replace('{server}', interaction.guild.name)
+						.replace('{server_members}', interaction.guild.memberCount);
 
 					// Add leveling placeholders
 					if (levelingData) {
@@ -215,20 +240,17 @@ module.exports = {
 							.replace('{next_level_xp}', levelingData.nextLevelXp)
 							.replace('{rank}', levelingData.rank);
 					}
-
 				}
-			}
 
-			if ((authorImage && !authorText) || (authorText && !isValidImageUrl(authorImage))) {
-				authorImage = null;
-			}
+
+
 
 
 				if (title && !title.startsWith(`\\`)) {
 					title = title.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
-					.replace('{username}', interaction.user.username) // Username of the user
-					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
-					.replace('{server}', interaction.guild.name)
+						.replace('{username}', interaction.user.username) // Username of the user
+						.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
+						.replace('{server}', interaction.guild.name)
 						.replace('{server_members}', interaction.guild.memberCount);
 
 					// Add leveling placeholders
@@ -242,66 +264,40 @@ module.exports = {
 				}
 
 
+
+
 			if (description && !description.startsWith(`\\`)) {
 				description = description.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
 					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
 					.replace('{server_members}', interaction.guild.memberCount);
-
-				// Add leveling placeholders
-				if (levelingData) {
-					description = description.replace('{level}', levelingData.level)
-						.replace('{current_xp}', levelingData.currentXp)
-						.replace('{total_xp}', levelingData.totalXp)
-						.replace('{next_level_xp}', levelingData.nextLevelXp)
-						.replace('{rank}', levelingData.rank);
-				}
 			}
 
 
-			if (!isValidImageUrl(image)) image = null;
-			
-
-
-
-
-				if (footerText && !footerText.startsWith(`\\`)) {
-					footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
+			if (footerText && !footerText.startsWith(`\\`)) {
+				footerText = footerText.replace('{user}', `<@${interaction.user.id}>`) // Mention the user
 					.replace('{username}', interaction.user.username) // Username of the user
 					.replace('{tag}', interaction.user.tag) // Username or tag of the user (e.g., "username")
 					.replace('{server}', interaction.guild.name)
-						.replace('{server_members}', interaction.guild.memberCount);
-
-					// Add leveling placeholders
-					if (levelingData) {
-						footerText = footerText.replace('{level}', levelingData.level)
-							.replace('{current_xp}', levelingData.currentXp)
-							.replace('{total_xp}', levelingData.totalXp)
-							.replace('{next_level_xp}', levelingData.nextLevelXp)
-							.replace('{rank}', levelingData.rank);
-					}
-				}
-
-
-			if (((footerImage) && !footerText) || (footerText && !isValidImageUrl(footerImage))) {
-				footerImage = null;
+					.replace('{server_members}', interaction.guild.memberCount);
 			}
 
 
-			if (!authorText && !authorImage && !title && !description && !thumbnail && !image && !footerText && !footerImage) description = '<:spacer:1329265736555827242>';
-
 
 			const botMember = interaction.guild.members.cache.get(interaction.client.user.id);
+
+
 
 
 			// builds the embed
 			try {
 				const customEmbed = new EmbedBuilder()
 
-				.setColor(color)
-				.setTitle(title)
-				.setDescription(description)
+
+					.setColor(color)
+					.setTitle(title)
+					.setDescription(description)
 				if (authorImage === "{user_avatar}") {
 					customEmbed.setAuthor({
 						name: authorText || interaction.user.username,
@@ -359,39 +355,33 @@ module.exports = {
 						text: footerText
 					});
 				}
-				if (timestamp) customEmbed.setTimestamp();
-					
+					if (timestamp) customEmbed.setTimestamp();
 
 
+					if (!botMember.permissions.has(PermissionsBitField.Flags.SendMessages)) {
+						return interaction.reply(':warning: I do not have permission to send embeds.');
 
-				if (!channel || channel.id === interaction.channel.id ) {
-					return await interaction.reply({ embeds: [customEmbed] });
-				}
-
-				if (!botMember.permissions.has(PermissionsBitField.Flags.SendMessages)) {
-					return interaction.reply(':warning: I do not have permission to send embeds.');
-
-				}
-				try {
-					await channel.send({ embeds: [customEmbed] });
-					return await interaction.reply(`Sent an embed in ${channel}!`);
-				} catch (error) {
-					if (error.message === 'Missing Permissions') {
-						return await interaction.reply(`I do not have permissions to send embeds in ${channel}.`);
 					}
-				}
-			} catch (error) {
+
+
+				return await interaction.reply({ embeds: [customEmbed] });
+				
+
+		} catch (error) {
 
 			console.log(error)
 			if (error.code === 'ColorConvert') {
 				return await interaction.reply('Invalid color input. View the colors [here](https://old.discordjs.dev/#/docs/discord.js/main/typedef/ColorResolvable). (the strings are case-sensitive)');
 			}
 
-			
+
 			if (error.code === 50035) {
-				return await interaction.reply('There was an error generating the embed.');
-			}			}
-		}
+				return await interaction.reply('There was an error saving the embed.');
+			}
+
+		}		
+	}
+		
 
 		if (interaction.options.getSubcommand() === 'create') {
 
@@ -1168,15 +1158,27 @@ module.exports = {
 
 		}
 
-	}
-},
+		}    
+	},
 };
-async function isValidImageUrl(url) {
+
+function isPlaceholderImage(value) {
+	if (typeof value !== 'string') return false;
+	const v = value.trim();
+	return v === "{user_avatar}" || v === "{server_avatar}";
+}
+
+function isValidImageUrl(url) {
+	if (typeof url !== 'string') return false;
+	const trimmed = url.trim();
+	if (!trimmed) return false;
+
 	const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg"];
 	try {
-		const parsedUrl = new URL(url); // Verify it's a valid URL
+		const parsedUrl = new URL(trimmed); // Verify it's a valid URL
+		if (!['http:', 'https:'].includes(parsedUrl.protocol)) return false;
 		return imageExtensions.some((ext) => parsedUrl.pathname.toLowerCase().endsWith(ext));
 	} catch (e) {
-		return false; // Invalid URL
+		return false; // Invalid URL or not a link
 	}
 }
