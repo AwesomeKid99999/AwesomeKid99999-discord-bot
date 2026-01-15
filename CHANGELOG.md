@@ -148,6 +148,8 @@ Format notes:
 
 - Version 2026.1.15 - Added support for subcommands and subcommand groups inside `/toggle` command to enable/disable individual commands. Bug fix for validating image link (when user does not input a link but other text instead) 
 
+- Version 2026.1.15.1 - Changed some datatypes in database
+
 ---
 
 ### Command index snapshot (as of 2026-1-15)
